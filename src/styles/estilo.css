@@ -1,0 +1,50 @@
+/* Guía de estilo */
+.guia { display: grid; gap: clamp(3rem, 7vw, 5rem); padding-block: clamp(2.5rem, 6vw, 4.5rem) 0; }
+.guia-cabeza { display: grid; gap: 1rem; max-width: 44rem; }
+.guia-cabeza h1 { font-size: var(--t-hero); font-weight: 480; letter-spacing: -0.035em; line-height: 0.98; }
+.guia-cabeza p:not(.etiqueta) { font-size: var(--t-l); color: var(--tinta-2); }
+.guia-bloque { display: grid; gap: 1.5rem; }
+.guia-bloque > h2 { font-size: var(--t-xl); padding-bottom: 0.6rem; border-bottom: 1px solid var(--linea); }
+.guia-nota { color: var(--tinta-2); max-width: 46rem; }
+.guia code { font: 400 0.85em var(--f-tecnica); }
+.guia-fila { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.guia-fila--botones { align-items: center; }
+.guia-pieza { margin: 0; display: grid; gap: 0.5rem; }
+.guia-pieza figcaption { font: 400 var(--t-xs) var(--f-tecnica); color: var(--tinta-2); letter-spacing: 0.04em; }
+.guia-lienzo { display: grid; place-items: center; min-width: 9rem; min-height: 9rem; padding: 1.25rem; border-radius: 0.6rem; box-shadow: inset 0 0 0 1px var(--linea); }
+.guia-lienzo--yeso { background: #ffffff; color: #0066ff; }
+.guia-lienzo--azul { background: #0066ff; color: #ffffff; box-shadow: none; }
+.guia-logos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.guia-logos .guia-lienzo { min-height: 8rem; }
+.guia-logo { font-size: clamp(2.6rem, 2rem + 2vw, 3.6rem); }
+.guia-iso { width: 4.5rem; }
+.guia-mono { width: 4rem; }
+.guia-og { width: min(100%, 40rem); border-radius: 0.5rem; box-shadow: var(--elev-2); }
+.guia-paleta { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.guia-paleta li { display: grid; gap: 0.2rem; align-content: start; }
+.guia-muestra { aspect-ratio: 4 / 5; border-radius: 999px 999px 0.35rem 0.35rem; box-shadow: inset 0 0 0 1px var(--linea); margin-bottom: 0.5rem; }
+.guia-paleta code { color: var(--tinta-2); font-size: var(--t-xs); }
+.guia-paleta small { font-size: 0.8125rem; color: var(--tinta-2); }
+.guia-tabla { width: 100%; border-collapse: collapse; font-size: var(--t-s); }
+.guia-tabla th { text-align: left; font: 500 var(--t-xs) var(--f-tecnica); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cobalto); }
+.guia-tabla th, .guia-tabla td { padding: 0.65rem 0.75rem 0.65rem 0; border-bottom: 1px solid var(--linea); vertical-align: top; }
+.guia-tabla td { color: var(--tinta-2); }
+.guia-tipos { display: grid; border-top: 1px solid var(--linea); }
+.guia-tipos > div { display: grid; gap: 0.6rem; padding-block: 1.5rem; border-bottom: 1px solid var(--linea); }
+.guia-display { font: 480 clamp(2rem, 1.2rem + 3vw, 3.4rem) / 1.02 var(--f-display); font-variation-settings: 'SOFT' 100, 'WONK' 0; letter-spacing: -0.03em; }
+.guia-display em { font-variation-settings: 'SOFT' 100, 'WONK' 1; }
+.guia-texto { font-size: var(--t-l); max-width: 40rem; color: var(--tinta-2); }
+.guia-tecnico { font: 500 1.25rem var(--f-tecnica); color: var(--cobalto); letter-spacing: 0.04em; }
+.guia-elevaciones { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
+.guia-elev { display: grid; gap: 0.3rem; padding: 1.25rem; border-radius: 0.6rem; background: var(--papel); min-height: 8rem; align-content: end; }
+.guia-elev small { color: var(--tinta-2); font-size: 0.8125rem; }
+.guia-azulejos { grid-template-columns: repeat(3, 2.8rem); gap: 0.35rem; }
+.guia-azulejos .azulejo { width: 2.8rem; --az-c: #ffffff; --linea: rgb(0 102 255 / 0.25); }
+.guia-ginkgo { width: 6rem; color: #0066ff; }
+.guia-destellos { position: relative; }
+.guia-destellos .destello:first-child { left: 2.5rem; top: 2.5rem; width: 2rem; }
+.guia-destellos .destello:last-child { right: 2.5rem; bottom: 2.5rem; width: 1.2rem; }
+.guia-cota { position: relative; width: 12rem; }
+.guia-cota .cota { left: 1.25rem; right: 1.25rem; top: 50%; color: #0066ff; }
+.guia-cota .cota span { background: #ffffff; }
+.guia-puerta { width: 5rem; aspect-ratio: 3 / 4; border: 0.8rem solid var(--rosa); border-bottom: 0; border-radius: 999px 999px 0 0; background: linear-gradient(to top, rgb(252 188 212 / 0.55), transparent 55%); }

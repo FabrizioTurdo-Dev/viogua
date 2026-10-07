@@ -1,0 +1,19 @@
+---
+import '../styles/legal.css';
+import Base from '../layouts/Base.astro';
+import Destello from '../components/marca/Destello.astro';
+import { ESTUDIO } from '../data/estudio';
+---
+
+<Base titulo={`Página no encontrada · ${ESTUDIO.nombre}`} descripcion="Esta página no existe." noindex>
+  <section class="perdida envoltura">
+    <div class="perdida-puerta" aria-hidden="true"><Destello /></div>
+    <p class="perdida-codigo">ERROR 404 · REF. SIN PLANO</p>
+    <h1>Esta puerta no lleva <em>a ningún lado</em></h1>
+    <p>Puede que el enlace esté mal escrito o que la página ya no exista. Probá desde el inicio o agendá tu reunión.</p>
+    <div class="acciones">
+      <a class="boton" href="/">Volver al inicio</a>
+      <a class="boton boton--linea" href="/test/">Agendar reunión</a>
+    </div>
+  </section>
+</Base>

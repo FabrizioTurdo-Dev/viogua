@@ -1,0 +1,167 @@
+/* VioGua · "Cobalto sobre Yeso"
+   Un plano de arquitecta en tinta cobalto sobre yeso, con muestras de materiales apoyadas encima.
+   Un azul, un rosa y blanco. El modo oscuro es el "modo azul" que pidió VioGua: todo en el #0066ff,
+   y lo que hay que resaltar va en yeso (el blanco del modo claro). */
+
+/* Fraunces recortada por scripts/marca.mjs: SOFT fijo en 100, peso 300–900, opsz y WONK libres. */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../assets/fuentes/fraunces.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../assets/fuentes/fraunces-italica.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* Paleta */
+  --azul: #0066ff;
+  --rosa: #fcbcd4;
+  --blanco: #ffffff;
+  --sobre-rosa: #002966; /* solo para texto chico sobre rosa: el azul sobre rosa no llega al contraste mínimo */
+
+  /* Tipografía */
+  --f-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --f-texto: 'Instrument Sans Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --f-tecnica: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --t-xs: 0.75rem;
+  --t-s: 0.875rem;
+  --t-m: 1.0625rem;
+  --t-l: 1.25rem;
+  --t-xl: clamp(1.7rem, 1.25rem + 1.6vw, 2.5rem);
+  --t-xxl: clamp(2.2rem, 1.4rem + 3vw, 3.8rem);
+  --t-hero: clamp(2.7rem, 1.3rem + 5.2vw, 5.6rem);
+
+  /* Medidas */
+  --ancho: 74rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --cabecera-alto: 4.25rem;
+
+  /* Movimiento */
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 400ms;
+  --dur-4: 700ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1); /* salida suave: la de siempre */
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-resorte: linear(0, 0.36 8%, 0.86 20%, 1.06 31%, 1.08 39%, 1.02 53%, 0.99 67%, 1);
+}
+
+/* ---------- Modo claro: tinta cobalto sobre yeso ----------
+   También lo usan, en el modo azul, los bloques que en claro son azules (se resaltan en yeso). */
+:root,
+:root[data-theme='dark'] :is(.azul, .pie) {
+  --yeso: #ffffff; /* fondo */
+  --papel: #ffffff; /* fichas y paneles */
+  --tinta: #0066ff; /* texto */
+  --tinta-2: #0066ff; /* texto secundario */
+  --linea: rgb(0 102 255 / 0.25); /* filetes y bordes */
+  --cobalto: #0066ff; /* enlaces, etiquetas, cotas, destellos */
+  --sobre-cobalto: #ffffff;
+  --boton: #0066ff;
+  --sobre-boton: #ffffff;
+  --acento: #0066ff; /* elección: días, horarios, opciones */
+  --sobre-acento: #ffffff;
+  --destacado: #fcbcd4; /* pastilla de promo, paso opcional, tarjeta del mensaje */
+  --sobre-destacado: #002966;
+  --burbuja: #ffffff;
+  --sobre-burbuja: #0066ff;
+  --enfasis: #0066ff;
+  --resaltador: #fcbcd4; /* banda bajo el texto destacado */
+  --resaltado-desde: 64%;
+  --resaltado-hasta: 90%;
+  --durazno: #fcbcd4; /* solo como luz */
+  --brillo: 0.55;
+  --velo: rgb(0 102 255 / 0.6);
+  --plano: rgb(0 102 255 / 0.07); /* grilla de plano */
+  --az-a: #0066ff;
+  --az-b: #fcbcd4;
+  --az-c: #ffffff;
+
+  /* Elevación: sombras tintadas de azul, en capas */
+  --elev-1: 0 1px 0 rgb(0 102 255 / 0.06), 0 3px 10px -4px rgb(0 102 255 / 0.25);
+  --elev-2: 0 1px 0 rgb(0 102 255 / 0.06), 0 18px 40px -26px rgb(0 102 255 / 0.45);
+  --elev-3: 0 2px 6px -2px rgb(0 61 153 / 0.16), 0 30px 64px -24px rgb(0 61 153 / 0.5);
+  --elev-muestra: 0 1px 0 rgb(0 102 255 / 0.06), 0 8px 14px -10px rgb(0 61 153 / 0.4), 0 26px 44px -30px rgb(0 102 255 / 0.55);
+  --luz: 0 0 0 0 transparent, 0 12px 44px -6px rgb(252 188 212 / 0.95);
+}
+:root {
+  --bloque: #0066ff; /* fondo de las secciones destacadas y del footer */
+  --acento-pie: #fcbcd4; /* íconos del footer: rosa sobre el footer azul, azul sobre el footer en yeso */
+  color-scheme: light;
+}
+
+/* ---------- Modo azul (el "modo oscuro" que pidió VioGua) ----------
+   Un solo tono, el #0066ff. Lo que hay que resaltar (botones, elecciones, bloques, el texto destacado)
+   va en yeso. Lo fija un script en <head> según la preferencia guardada o la del sistema. */
+:root[data-theme='dark'] {
+  --bloque: #ffffff;
+  --yeso: #0066ff;
+  --papel: #0066ff;
+  --tinta: #ffffff;
+  --tinta-2: #ffffff;
+  --linea: rgb(255 255 255 / 0.4);
+  --cobalto: #ffffff;
+  --sobre-cobalto: #0066ff;
+  --boton: #ffffff;
+  --sobre-boton: #0066ff;
+  --acento: #ffffff;
+  --sobre-acento: #0066ff;
+  --destacado: #ffffff;
+  --sobre-destacado: #0066ff;
+  --burbuja: #0066ff;
+  --sobre-burbuja: #ffffff;
+  --enfasis: #ffffff; /* el texto destacado se marca entero en rosa, con letra blanca */
+  --resaltador: #fcbcd4;
+  --resaltado-desde: 6%;
+  --resaltado-hasta: 98%;
+  --durazno: #ffffff;
+  --brillo: 0.3;
+  --velo: rgb(0 40 120 / 0.75);
+  --plano: rgb(255 255 255 / 0.1);
+  --az-a: #0066ff;
+  --az-b: #fcbcd4;
+  --az-c: #ffffff;
+  --acento-pie: #0066ff;
+  --elev-1: none;
+  --elev-2: none;
+  --elev-3: 0 30px 64px -22px rgb(0 40 120 / 0.6);
+  --elev-muestra: 0 18px 40px -22px rgb(0 40 120 / 0.6);
+  --luz: 0 12px 44px -6px rgb(255 255 255 / 0.55);
+  color-scheme: dark;
+}
+
+/* ---------- Bloques sobre azul (modo claro) y pantalla del moodboard (siempre) ----------
+   El mismo sistema en negativo: texto blanco, detalles rosa. */
+:root:not([data-theme='dark']) :is(.azul, .pie),
+body:has(.resultado:not([hidden])) {
+  --yeso: #0066ff;
+  --papel: #0066ff;
+  --tinta: #ffffff;
+  --tinta-2: #ffffff;
+  --linea: rgb(255 255 255 / 0.4);
+  --cobalto: #ffffff;
+  --sobre-cobalto: #0066ff;
+  --boton: #ffffff;
+  --sobre-boton: #0066ff;
+  --acento: #ffffff;
+  --sobre-acento: #0066ff;
+  --enfasis: #0066ff;
+  --resaltador: #fcbcd4;
+  --resaltado-desde: 64%;
+  --resaltado-hasta: 90%;
+  --velo: rgb(0 40 120 / 0.75);
+  --plano: rgb(255 255 255 / 0.07);
+  --elev-1: none;
+  --elev-2: none;
+  --elev-muestra: 0 18px 40px -22px rgb(0 40 120 / 0.6);
+  --luz: 0 12px 44px -6px rgb(252 188 212 / 0.7);
+  --az-a: #0066ff;
+  --az-c: #ffffff;
+}

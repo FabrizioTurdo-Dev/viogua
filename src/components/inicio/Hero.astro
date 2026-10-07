@@ -1,0 +1,36 @@
+---
+import { Picture } from 'astro:assets';
+import Ginkgo from '../marca/Ginkgo.astro';
+import { ESTUDIO } from '../../data/estudio';
+import { fotoEstilo } from '../../data/fotos';
+---
+
+<section class="hero envoltura" aria-labelledby="titulo-hero">
+  <div class="hero-texto">
+    <p class="etiqueta hero-entra">{ESTUDIO.rubro}</p>
+    <h1 id="titulo-hero">Diseñamos espacios que <em>te representan</em></h1>
+    <p class="hero-bajada hero-entra" style="--orden:2">{ESTUDIO.descripcion}</p>
+    <div class="acciones hero-entra" style="--orden:3">
+      <span class="luz" aria-hidden="true"></span>
+      <a class="boton boton--grande" href="/test/" data-astro-prefetch>Empecemos con el diseño <span class="boton-flecha" aria-hidden="true">→</span></a>
+      <p class="anotacion"><span class="anotacion-linea" aria-hidden="true"></span>Incluye test de estilo y moodboard de regalo</p>
+    </div>
+  </div>
+
+  <figure class="lamina-hero">
+    <div class="arco">
+      <Picture
+        src={fotoEstilo('14')}
+        formats={['avif', 'webp']}
+        widths={[360, 540, 720, 900]}
+        sizes="(min-width: 60rem) 21rem, 72vw"
+        alt="Living de estilo mediterráneo con nichos en arco, madera y tonos arena"
+        priority
+      />
+    </div>
+    <div class="cota cota--v" aria-hidden="true"><span>2.40 m</span></div>
+    <div class="cota cota--h" aria-hidden="true"><span>1.92 m</span></div>
+    <Ginkgo class="ginkgo--hero" />
+    <figcaption class="pie-tecnico">Ref. 14 · Mediterráneo</figcaption>
+  </figure>
+</section>

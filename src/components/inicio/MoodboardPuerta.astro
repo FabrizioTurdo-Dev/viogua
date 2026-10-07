@@ -1,0 +1,42 @@
+---
+// «Mi propio estilo»: el moodboard completo, con un arco rosa encima que funciona como puerta.
+import { Picture } from 'astro:assets';
+import Destello from '../marca/Destello.astro';
+import moodboard from '../../assets/moodboard.jpg';
+---
+
+<section class="seccion azul moodboard envoltura" id="moodboard" aria-labelledby="titulo-moodboard">
+  <div class="moodboard-texto" data-revelar>
+    <p class="etiqueta">Test de moodboard</p>
+    <h2 id="titulo-moodboard">Mi propio estilo</h2>
+    <p>
+      Cada persona es un mundo distinto, con estilos distintos. ¿Querés conocer tu mundo? Luego de agendar tu turno podés
+      hacer un test de 4 pasos para conocer mejor tu estilo y tener tu propio moodboard.
+    </p>
+    <div class="definicion">
+      <p class="etiqueta">¿Qué es un moodboard?</p>
+      <p>
+        Es un tablero de inspiración: una composición que reúne imágenes, colores, texturas y materiales para transmitir
+        el estilo y la atmósfera de un proyecto antes de empezar a diseñarlo.
+      </p>
+    </div>
+    <a class="boton boton--grande boton--empecemos" href="/test/">EMPECEMOS</a>
+    <p class="nota">el test se podrá realizar únicamente con turno previo :)</p>
+  </div>
+
+  <figure class="puerta" data-revelar style="--orden:1">
+    <div class="puerta-lamina">
+      <Picture
+        src={moodboard}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 922]}
+        sizes="(min-width: 60rem) 40rem, 92vw"
+        alt="Ejemplo de moodboard: texturas, objetos y paleta en tonos neutros"
+        loading="lazy"
+      />
+    </div>
+    <span class="puerta-marco" aria-hidden="true"></span>
+    <Destello class="puerta-destello-1" />
+    <Destello class="puerta-destello-2" />
+  </figure>
+</section>

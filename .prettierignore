@@ -1,0 +1,6 @@
+dist
+.astro
+node_modules
+src/brand/trazos.ts
+public
+src/styles

@@ -1,0 +1,11 @@
+---
+// Franja de azulejos que se desliza. Dos mitades iguales para que el loop no salte.
+const tipos = ['az-arco', 'az-damero', 'az-cuarto', 'az-ondas', 'az-diagonal', 'az-arco', 'az-puntos', 'az-cuarto', 'az-damero', 'az-ondas', 'az-arco', 'az-diagonal', 'az-puntos', 'az-cuarto'];
+const serie = [...tipos, ...tipos, ...tipos, ...tipos];
+---
+
+<div class="azulejos" aria-hidden="true">
+  <div class="azulejos-pista">
+    {serie.map(t => <span class={`azulejo ${t}`} />)}
+  </div>
+</div>

@@ -1,0 +1,13 @@
+---
+// El logo vectorial (scripts/marca.mjs). Hereda el color; la puerta siempre es rosa.
+import LogoSvg from '../../brand/logo.svg';
+
+interface Props {
+  class?: string;
+  /** Si el logo está dentro de un enlace con su propio nombre accesible. */
+  decorativo?: boolean;
+}
+const { class: clase, decorativo = false } = Astro.props;
+---
+
+<LogoSvg class:list={['logo', clase]} aria-hidden={decorativo ? 'true' : undefined} focusable="false" />

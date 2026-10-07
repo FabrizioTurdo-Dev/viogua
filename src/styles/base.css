@@ -1,0 +1,247 @@
+/* Base: reset, tipografía, botones, piezas de marca y movimiento compartido. */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--cabecera-alto) + 1.5rem);
+  -webkit-text-size-adjust: 100%;
+  background: var(--yeso);
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--yeso);
+  color: var(--tinta);
+  font: 400 var(--t-m) / 1.6 var(--f-texto);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  transition: background-color var(--dur-3) var(--ease), color var(--dur-3) var(--ease);
+}
+main { flex: 1 0 auto; }
+img, svg { max-width: 100%; display: block; }
+img { height: auto; }
+a { color: var(--cobalto); text-underline-offset: 0.2em; }
+p { margin: 0; }
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
+  font-weight: 520;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+h2 { font-size: var(--t-xxl); }
+h3 { font-size: 1.45rem; font-weight: 560; letter-spacing: -0.01em; }
+em { font-style: italic; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--cobalto); outline-offset: 3px; border-radius: 2px; }
+::selection { background: var(--resaltador); color: var(--enfasis); }
+
+.envoltura { width: 100%; max-width: calc(var(--ancho) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.visualmente-oculto {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.saltar {
+  position: fixed; left: 1rem; top: 1rem; z-index: 100;
+  padding: 0.7rem 1rem; border-radius: 0.5rem;
+  background: var(--boton); color: var(--sobre-boton); font-weight: 600; text-decoration: none;
+  transform: translateY(-200%); transition: transform var(--dur-2) var(--ease);
+}
+.saltar:focus-visible { transform: none; }
+
+/* ---------- Textos técnicos ---------- */
+.etiqueta {
+  font: 500 var(--t-xs) / 1.35 var(--f-tecnica);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cobalto);
+}
+.nota { font-size: var(--t-s); color: var(--tinta-2); }
+.pie-tecnico { font: 400 var(--t-xs) / 1.4 var(--f-tecnica); letter-spacing: 0.04em; color: var(--tinta-2); }
+.pendiente {
+  display: inline-block; margin-left: 0.35rem; padding: 0.05rem 0.45rem; border-radius: 999px;
+  border: 1px dashed currentColor; font: 400 var(--t-xs) var(--f-tecnica); opacity: 0.8; vertical-align: 0.1em;
+}
+
+/* ---------- Botones y enlaces ---------- */
+.boton {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.95rem 1.6rem 0.85rem;
+  border: 0;
+  border-radius: 1.75rem 1.75rem 0.4rem 0.4rem; /* arco */
+  background: var(--boton);
+  color: var(--sobre-boton);
+  font: 600 1rem / 1.2 var(--f-texto);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease),
+    color var(--dur-2) var(--ease), box-shadow var(--dur-3) var(--ease);
+}
+.boton:hover { transform: translateY(-2px); box-shadow: var(--luz); }
+.boton:active { transform: translateY(0) scale(0.98); transition-duration: var(--dur-1); }
+.boton:disabled, .boton[aria-disabled='true'] { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+.boton--grande { min-height: 3.75rem; padding: 1.15rem 2rem 1.05rem; font-size: 1.0625rem; }
+.boton--chico { min-height: 2.5rem; padding: 0.55rem 1rem 0.5rem; font-size: 0.9375rem; border-radius: 1.25rem 1.25rem 0.35rem 0.35rem; }
+.boton--linea { background: transparent; color: var(--cobalto); box-shadow: inset 0 0 0 1.5px var(--cobalto); }
+.boton--linea:hover { background: var(--cobalto); color: var(--sobre-cobalto); box-shadow: inset 0 0 0 1.5px var(--cobalto); }
+.boton-flecha { display: inline-block; transition: transform var(--dur-3) var(--ease); }
+.boton:hover .boton-flecha { transform: translateX(4px); }
+.boton[data-ocupado] { pointer-events: none; }
+.boton[data-ocupado]::after {
+  content: ''; width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid currentColor; border-right-color: transparent;
+  animation: girar 0.8s linear infinite;
+}
+@keyframes girar { to { transform: rotate(1turn); } }
+
+.enlace {
+  background: none; border: 0; padding: 0.25rem 0; cursor: pointer;
+  color: var(--cobalto); font: 500 var(--t-s) / 1.4 var(--f-texto);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em;
+}
+.enlace:hover { text-decoration-thickness: 2px; }
+.redondo {
+  width: 2.5rem; height: 2.5rem; flex: none;
+  display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid var(--linea); background: transparent;
+  color: var(--cobalto); font-size: 1.25rem; line-height: 1; cursor: pointer;
+  transition: border-color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease);
+}
+.redondo:hover:not(:disabled) { border-color: var(--cobalto); }
+.redondo:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Subrayado que se dibuja de izquierda a derecha */
+.subrayado { text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px; transition: background-size var(--dur-3) var(--ease); padding-bottom: 2px; }
+.subrayado:hover, .subrayado:focus-visible { background-size: 100% 1px; }
+
+/* ---------- Secciones ---------- */
+.seccion { padding-block: clamp(3.5rem, 8vw, 6.5rem) 0; display: grid; gap: 2.25rem; }
+.seccion-cabeza { display: grid; gap: 0.9rem; max-width: 44rem; }
+.seccion-cabeza > p:not(.etiqueta) { color: var(--tinta-2); font-size: var(--t-l); line-height: 1.5; }
+
+/* Sección azul a todo el ancho de la pantalla */
+.azul {
+  background: var(--bloque); color: var(--tinta);
+  margin-top: clamp(3.5rem, 8vw, 6.5rem);
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+  box-shadow: 0 0 0 100vmax var(--bloque); clip-path: inset(0 -100vmax);
+}
+.azul h2 { color: var(--tinta); }
+
+.definicion {
+  display: grid; gap: 0.4rem; padding: 1.1rem 1.2rem;
+  border-left: 2px solid var(--rosa);
+}
+.definicion p:not(.etiqueta) { font-size: 0.975rem; color: var(--tinta); }
+
+/* ---------- Piezas de marca ---------- */
+.logo { display: block; height: 0.74em; width: auto; color: inherit; overflow: visible; }
+/* Ondulación del wordmark: cada letra sube y baja un poco, desfasada de la anterior, como una ola que pasa. */
+.logo-letra { transform-box: fill-box; transform-origin: 50% 100%; animation: logo-onda 3.4s ease-in-out infinite; animation-delay: calc(var(--i) * -0.32s); }
+@keyframes logo-onda {
+  0%, 100% { transform: translateY(0) scaleY(1) skewX(0deg); }
+  25% { transform: translateY(-5%) scaleY(1.05) skewX(-2.5deg); }
+  75% { transform: translateY(3%) scaleY(0.96) skewX(2.5deg); }
+}
+/* Al pasar el cursor la ola se acelera y se vuelve vibración. */
+.marca:hover .logo-letra { animation-duration: 0.9s; animation-delay: calc(var(--i) * -0.09s); }
+.marca { display: inline-grid; gap: 0.35rem; text-decoration: none; color: var(--tinta); }
+.marca-logo { font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.35rem); }
+.marca-bajada { font: 400 0.6875rem / 1.2 var(--f-tecnica); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-2); }
+
+/* Cotas: líneas de medida con remates a 45°, como en un plano */
+.cota { position: absolute; color: var(--cobalto); font: 500 var(--t-xs) var(--f-tecnica); }
+.cota::before, .cota::after { content: ''; position: absolute; background: currentColor; width: 11px; height: 1px; }
+.cota span { position: absolute; padding: 0.1rem 0.4rem; background: var(--yeso); white-space: nowrap; letter-spacing: 0.04em; }
+.cota--v { width: 1px; background: currentColor; }
+.cota--v::before { top: 0; left: -5px; transform: rotate(-45deg); }
+.cota--v::after { bottom: 0; left: -5px; transform: rotate(-45deg); }
+.cota--v span { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); }
+.cota--h { height: 1px; background: currentColor; }
+.cota--h::before { left: -5px; top: 0; transform: rotate(-45deg); }
+.cota--h::after { right: -5px; top: 0; transform: rotate(-45deg); }
+.cota--h span { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+/* Las cotas se dibujan: la línea crece y la medida aparece al pasar */
+@keyframes cota-v { from { clip-path: inset(-12px -40px 100% -40px); } to { clip-path: inset(-12px -40px -12px -40px); } }
+@keyframes cota-h { from { clip-path: inset(-40px 100% -40px -12px); } to { clip-path: inset(-40px -12px -40px -12px); } }
+
+/* Ginkgo dibujado */
+.ginkgo { display: block; color: var(--cobalto); pointer-events: none; }
+.ginkgo svg { width: 100%; height: auto; overflow: visible; }
+.trazo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: dibujar 1.6s var(--ease) forwards; animation-delay: calc(var(--i) * 45ms + 0.2s); }
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+
+/* Destello de 4 puntas: parpadeo lento */
+.destello { position: absolute; display: block; width: 1.6rem; color: var(--cobalto); pointer-events: none; animation: titilar 3.6s var(--ease-io) infinite; }
+.destello svg { width: 100%; height: auto; }
+.destello:nth-of-type(2n) { animation-delay: -1.8s; animation-duration: 4.4s; }
+@keyframes titilar { 0%, 100% { transform: scale(0.72) rotate(0deg); opacity: 0.55; } 50% { transform: scale(1) rotate(45deg); opacity: 1; } }
+
+/* Azulejos: juego de patrones con los tres colores */
+.azulejo {
+  display: block; width: 3.5rem; aspect-ratio: 1; flex: none;
+  border-radius: 0.2rem;
+  background-color: var(--az-c);
+  box-shadow: inset 0 0 0 1px var(--linea);
+}
+.az-arco {
+  background:
+    radial-gradient(circle at 50% 50%, var(--az-a) 0 31%, transparent 32%) no-repeat 50% 22% / 100% 100%,
+    linear-gradient(var(--az-a), var(--az-a)) no-repeat 50% 100% / 62% 50%,
+    var(--az-b);
+}
+.az-cuarto { background: radial-gradient(circle at 0 100%, var(--az-b) 0 62%, transparent 63%), radial-gradient(circle at 100% 0, var(--az-a) 0 38%, transparent 39%), var(--az-c); }
+.az-damero { background: conic-gradient(var(--az-a) 0 25%, var(--az-c) 0 50%, var(--az-a) 0 75%, var(--az-c) 0) 0 0 / 50% 50%; }
+.az-ondas { background: repeating-radial-gradient(circle at 100% 100%, var(--az-a) 0 2px, var(--az-c) 2px 8px); }
+.az-diagonal { background: linear-gradient(135deg, var(--az-b) 50%, var(--az-a) 50%); }
+.az-puntos { background: radial-gradient(var(--az-a) 22%, transparent 24%) 0 0 / 33.33% 33.33%, var(--az-b); }
+
+/* ---------- Aviso y diálogo ---------- */
+.aviso {
+  position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); z-index: 60;
+  max-width: calc(100vw - 2rem); padding: 0.75rem 1.1rem; border-radius: 0.5rem;
+  background: var(--tinta); color: var(--yeso); font-size: var(--t-s); box-shadow: var(--elev-3);
+  transform: translateX(-50%);
+  animation: aparecer-abajo var(--dur-3) var(--ease);
+}
+@keyframes aparecer-abajo { from { opacity: 0; transform: translate(-50%, 0.75rem); } }
+.dialogo {
+  width: min(26rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 1rem;
+  border: 0; border-radius: 0.75rem; background: var(--papel); color: var(--tinta); box-shadow: var(--elev-3);
+}
+.dialogo::backdrop { background: var(--velo); backdrop-filter: blur(3px); }
+.dialogo[open] { display: grid; gap: 0.75rem; animation: aparecer var(--dur-3) var(--ease); }
+.dialogo-cabeza { display: flex; align-items: center; justify-content: space-between; }
+.dialogo img { width: 100%; max-height: 62dvh; object-fit: contain; border-radius: 0.4rem; }
+@keyframes aparecer { from { opacity: 0; transform: translateY(0.75rem) scale(0.98); } }
+
+/* ---------- Aparición al scrollear ---------- */
+/* Solo se oculta lo que todavía no se vio cuando arranca el script (clase .revela), así nada parpadea ni queda oculto sin JS. */
+/* Con animación (y la propiedad translate) para no pisar los hover que usan transform ni sus transiciones. */
+.revela [data-revelar]:not(.visto) { opacity: 0; }
+.revela [data-revelar].visto { animation: revelar var(--dur-4) var(--ease) both; animation-delay: calc(var(--orden, 0) * 70ms); }
+@keyframes revelar { from { opacity: 0; translate: 0 16px; } }
+.revela [data-revelar].ya { animation: none; }
+
+/* Transición de tema: círculo que nace del botón */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-delay: 0s !important;
+    animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0s !important;
+  }
+  .trazo { stroke-dashoffset: 0; }
+  .revela [data-revelar]:not(.visto) { opacity: 1; }
+}

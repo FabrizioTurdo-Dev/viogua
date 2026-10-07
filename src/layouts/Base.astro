@@ -1,0 +1,69 @@
+---
+import '@fontsource-variable/instrument-sans/wght.css';
+import '@fontsource/dm-mono/latin-400.css';
+import '@fontsource/dm-mono/latin-500.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import fraunces from '../assets/fuentes/fraunces.woff2?url';
+import instrument from '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url';
+import Seo from '../components/layout/Seo.astro';
+import Cabecera from '../components/layout/Cabecera.astro';
+import Pie from '../components/layout/Pie.astro';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  noindex?: boolean;
+  datos?: Record<string, unknown>[];
+  /** Clase del <body> (por ejemplo, para el test). */
+  clase?: string;
+}
+const { titulo, descripcion, noindex, datos, clase } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      // Antes de pintar: tema guardado (o el del sistema) y la entrada del logo una vez por sesión.
+      (() => {
+        const d = document.documentElement;
+        d.classList.add('js');
+        let tema = null;
+        try { tema = localStorage.getItem('viogua-tema'); } catch {}
+        if (tema !== 'light' && tema !== 'dark') tema = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        d.dataset.theme = tema;
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', tema === 'dark' ? '#0066ff' : '#ffffff');
+        try {
+          if (!sessionStorage.getItem('viogua-logo')) { d.dataset.logo = 'entra'; sessionStorage.setItem('viogua-logo', '1'); }
+        } catch {}
+      })();
+    </script>
+    <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={instrument} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Resumen para buscadores con IA" />
+    <Seo titulo={titulo} descripcion={descripcion} noindex={noindex} datos={datos} />
+    <slot name="head" />
+  </head>
+  <body class={clase}>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <Cabecera />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Pie />
+    <div class="aviso" id="aviso" role="status" aria-live="polite" hidden></div>
+    <script>
+      import '../scripts/cabecera';
+      import '../scripts/revelar';
+    </script>
+  </body>
+</html>

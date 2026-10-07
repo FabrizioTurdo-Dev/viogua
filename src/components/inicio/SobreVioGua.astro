@@ -1,0 +1,47 @@
+---
+// Quiénes somos y qué hacemos, con frases concretas (autoría y contexto para buscadores e IA).
+import { ESTUDIO, SERVICIOS } from '../../data/estudio';
+const dev = import.meta.env.DEV;
+---
+
+<section class="seccion estudio envoltura" id="estudio" aria-labelledby="titulo-estudio">
+  <div class="seccion-cabeza" data-revelar>
+    <p class="etiqueta">Sobre {ESTUDIO.nombre}</p>
+    <h2 id="titulo-estudio">Un estudio que diseña <em class="resaltado">con vos</em></h2>
+  </div>
+  <div class="estudio-cuerpo">
+    <div class="estudio-texto" data-revelar>
+      <p><strong>{ESTUDIO.identidad}</strong></p>
+      <p>
+        Creemos que cada casa tiene que parecerse a quien la vive. Por eso combinamos estética, funcionalidad y armonía,
+        y te acompañamos paso a paso: desde la primera charla hasta el diseño final de cada ambiente.
+      </p>
+      {
+        ESTUDIO.equipo.length > 0 && (
+          <p>
+            Detrás de {ESTUDIO.nombre}: {ESTUDIO.equipo.map(p => `${p.nombre} (${p.rol})`).join(', ')}.
+          </p>
+        )
+      }
+      {
+        dev && ESTUDIO.equipo.length === 0 && (
+          <p class="equipo-pendiente">
+            <span class="pendiente">a definir</span> Quién está detrás del estudio: nombre, formación, desde cuándo diseña y
+            desde qué ciudad trabaja.
+          </p>
+        )
+      }
+    </div>
+    <dl class="servicios" data-revelar style="--orden:1">
+      {
+        SERVICIOS.map((s, i) => (
+          <div>
+            <span aria-hidden="true">0{i + 1}</span>
+            <dt>{s.titulo}</dt>
+            <dd>{s.texto}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

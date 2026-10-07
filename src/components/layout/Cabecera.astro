@@ -1,0 +1,46 @@
+---
+import '../../styles/cabecera.css';
+import Logo from '../marca/Logo.astro';
+import { ESTUDIO } from '../../data/estudio';
+
+const enInicio = Astro.url.pathname === '/';
+const pre = enInicio ? '' : '/';
+const enlaces = [
+  { href: `${pre}#proceso`, texto: 'Proceso' },
+  { href: `${pre}#moodboard`, texto: 'Test de estilo' },
+  { href: `${pre}#preguntas`, texto: 'Preguntas' },
+];
+---
+
+<header class="cabecera" data-cabecera>
+  <div class="cabecera-fila envoltura">
+    <a class="marca" href="/" aria-label={`${ESTUDIO.nombre}, ir al inicio`}>
+      <span class="marca-logo"><Logo decorativo /></span>
+      <span class="marca-bajada">{ESTUDIO.bajada}</span>
+    </a>
+
+    <nav class="navegacion" id="navegacion" aria-label="Principal" data-navegacion>
+      {enlaces.map(e => <a href={e.href}>{e.texto}</a>)}
+      <a href={`${pre}#promos`} class="nav-promo">Promos</a>
+    </nav>
+
+    <div class="cabecera-acciones">
+      <button class="tema-boton redondo" type="button" aria-pressed="false" data-tema>
+        <span class="visualmente-oculto">Modo oscuro</span>
+        <svg class="lampara" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <g class="lampara-luz">
+            <path d="M12 21.5v1.2M7.2 19.4l-.9.9M16.8 19.4l.9.9M5 16.6H3.8M20.2 16.6H19" />
+          </g>
+          <path class="lampara-cable" d="M12 1v5" />
+          <path class="lampara-pantalla" d="M5 15.5a7 7 0 0 1 14 0Z" />
+          <circle class="lampara-foco" cx="12" cy="17" r="1.9" />
+        </svg>
+      </button>
+      <a class="boton boton--chico cabecera-agendar" href="/test/" data-astro-prefetch>Agendar</a>
+      <button class="menu-boton redondo" type="button" aria-expanded="false" aria-controls="navegacion" data-menu>
+        <span class="visualmente-oculto">Menú</span>
+        <span class="menu-lineas" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,150 @@
+---
+// Guía de estilo (noindex): el sistema de marca en una sola página para que VioGua lo apruebe.
+import '../styles/inicio.css';
+import '../styles/estilo.css';
+import Base from '../layouts/Base.astro';
+import Logo from '../components/marca/Logo.astro';
+import Ginkgo from '../components/marca/Ginkgo.astro';
+import Destello from '../components/marca/Destello.astro';
+import IsotipoSvg from '../brand/isotipo.svg';
+import Monograma from '../brand/monograma.svg';
+import { ESTUDIO } from '../data/estudio';
+
+const paleta = [
+  { nombre: 'Azul', hex: '#0066ff', uso: 'Marca, textos, líneas, botones y fondos' },
+  { nombre: 'Rosa', hex: '#fcbcd4', uso: 'Resaltador, arcos, puerta y detalles' },
+  { nombre: 'Blanco', hex: '#FFFFFF', uso: 'Fondo general y texto sobre azul' },
+  { nombre: 'Azul noche', hex: '#002966', uso: 'Solo texto chico sobre rosa (el azul sobre rosa no alcanza el contraste)' },
+];
+const contrastes = [
+  ['Blanco sobre azul', '4,83 : 1', 'Pasa (texto normal)'],
+  ['Azul sobre blanco', '4,83 : 1', 'Pasa (texto normal)'],
+  ['Azul noche sobre rosa', '8,9 : 1', 'Pasa: único color para texto chico sobre rosa'],
+  ['Azul sobre rosa', '3,06 : 1', 'Solo texto grande (≥ 24 px)'],
+  ['Blanco sobre rosa', '1,6 : 1', 'No usar'],
+];
+const elevaciones = [
+  ['--elev-1', 'Reposo', 'Azulejos, elecciones, días y horarios'],
+  ['--elev-2', 'Tarjeta', 'Promo, panel del test'],
+  ['--elev-3', 'Flotante', 'Diálogo, aviso, menú del celular'],
+  ['--elev-muestra', 'Muestra apoyada', 'Fotos en arco y fichas al levantarlas'],
+  ['--luz', 'Luz', 'Resplandor del botón principal al pasar el mouse'],
+];
+const movimiento = [
+  ['--dur-1', '120 ms', 'Presionar'],
+  ['--dur-2', '220 ms', 'Hover y cambios de color'],
+  ['--dur-3', '400 ms', 'Paneles, menú, cambio de tema'],
+  ['--dur-4', '700 ms', 'Apariciones al scrollear y puertas'],
+  ['--ease', 'cubic-bezier(.2, .7, .2, 1)', 'Salida suave (la de siempre)'],
+  ['--ease-resorte', 'linear(…)', 'Pequeño rebote: números de orden, azulejos'],
+];
+---
+
+<Base titulo={`Guía de estilo · ${ESTUDIO.nombre}`} descripcion="Sistema de marca de VioGua: logo, paleta, tipografía, elevación y movimiento." noindex>
+  <div class="guia envoltura">
+    <header class="guia-cabeza">
+      <p class="etiqueta">Guía de estilo · uso interno</p>
+      <h1>Cobalto <em class="resaltado">sobre</em> Yeso</h1>
+      <p>
+        Un plano de arquitecta dibujado en tinta cobalto sobre yeso, con muestras de materiales apoyadas encima. Un azul,
+        un rosa y blanco. El modo oscuro es el «modo azul»: todo en el #0066ff, y lo que se resalta (botones,
+        elecciones, bloques, el texto destacado) va en yeso. Esta página no aparece en buscadores.
+      </p>
+    </header>
+
+    <section class="guia-bloque" aria-labelledby="g-logo">
+      <h2 id="g-logo">Logo</h2>
+      <p class="guia-nota">
+        Wordmark en Fraunces 800 (SOFT 100, WONK 1) convertido a vectores, con la O propia: un aro con una puerta en arco
+        adentro. Un solo archivo (<code>src/brand/logo.svg</code>) alimenta la cabecera, el footer, el collage, la historia
+        de Instagram, el favicon y la imagen para redes. Si VioGua entrega un logo definitivo, se reemplaza ese archivo.
+      </p>
+      <div class="guia-logos">
+        <div class="guia-lienzo guia-lienzo--yeso"><Logo class="guia-logo" /></div>
+        <div class="guia-lienzo guia-lienzo--azul"><Logo class="guia-logo" /></div>
+      </div>
+      <div class="guia-fila">
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso"><IsotipoSvg class="guia-iso" /></div><figcaption>Isotipo · favicon y avatar</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso"><Monograma class="guia-mono" /></div><figcaption>Monograma · avatar del mensaje</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso"><img src="/apple-touch-icon.png" alt="" width="90" height="90" /></div><figcaption>Ícono de la app</figcaption></figure>
+      </div>
+      <button class="boton boton--linea boton--chico" type="button" data-repetir-logo>Ver la entrada del logo</button>
+      <figure class="guia-pieza"><img class="guia-og" src="/og.jpg" alt="Imagen para redes de VioGua" width="1200" height="630" loading="lazy" /><figcaption>Imagen para redes (1200 × 630)</figcaption></figure>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-paleta">
+      <h2 id="g-paleta">Paleta</h2>
+      <ul class="guia-paleta">
+        {paleta.map(c => (
+          <li><span class="guia-muestra" style={`background:${c.hex}`} /><b>{c.nombre}</b><code>{c.hex}</code><small>{c.uso}</small></li>
+        ))}
+      </ul>
+      <table class="guia-tabla">
+        <thead><tr><th>Combinación</th><th>Contraste</th><th>Uso</th></tr></thead>
+        <tbody>{contrastes.map(([a, b, c]) => <tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>)}</tbody>
+      </table>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-tipos">
+      <h2 id="g-tipos">Tipografía</h2>
+      <div class="guia-tipos">
+        <div><p class="etiqueta">Fraunces · títulos y logo</p><p class="guia-display">Diseñamos espacios que <em>te representan</em></p></div>
+        <div><p class="etiqueta">Instrument Sans · texto</p><p class="guia-texto">{ESTUDIO.descripcion}</p></div>
+        <div><p class="etiqueta">DM Mono · cotas y etiquetas</p><p class="guia-tecnico">2.40 m · Ø 1.20 · VG—03 · Ref. 14</p></div>
+      </div>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-elevacion">
+      <h2 id="g-elevacion">Elevación</h2>
+      <p class="guia-nota">Sombras en capas tintadas de azul. En el modo azul casi no hay sombras: las superficies se separan con filetes blancos y los resaltes en yeso.</p>
+      <div class="guia-elevaciones">
+        {elevaciones.map(([token, nombre, uso]) => (
+          <div class="guia-elev" style={`box-shadow:var(${token})`}><code>{token}</code><b>{nombre}</b><small>{uso}</small></div>
+        ))}
+      </div>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-componentes">
+      <h2 id="g-componentes">Botones y enlaces</h2>
+      <div class="guia-fila guia-fila--botones">
+        <a class="boton" href="#g-componentes">Principal</a>
+        <a class="boton boton--grande" href="#g-componentes">Grande <span class="boton-flecha" aria-hidden="true">→</span></a>
+        <a class="boton boton--linea" href="#g-componentes">Línea</a>
+        <a class="boton boton--chico" href="#g-componentes">Chico</a>
+        <button class="boton" type="button" aria-disabled="true">Incompleto</button>
+        <a class="subrayado" href="#g-componentes">Enlace con subrayado</a>
+      </div>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-marca">
+      <h2 id="g-marca">Piezas de marca</h2>
+      <div class="guia-fila">
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso guia-azulejos">{['az-arco', 'az-damero', 'az-cuarto', 'az-ondas', 'az-diagonal', 'az-puntos'].map(a => <span class={`azulejo ${a}`} />)}</div><figcaption>Azulejos</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso"><Ginkgo class="guia-ginkgo" /></div><figcaption>Ginkgo dibujado</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--azul guia-destellos"><Destello /><Destello /></div><figcaption>Destellos</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--yeso guia-cota"><div class="cota cota--h"><span>1.92 m</span></div></div><figcaption>Cota</figcaption></figure>
+        <figure class="guia-pieza"><div class="guia-lienzo guia-lienzo--azul"><span class="guia-puerta" /></div><figcaption>Arco · puerta</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="guia-bloque" aria-labelledby="g-movimiento">
+      <h2 id="g-movimiento">Movimiento</h2>
+      <p class="guia-nota">Editorial y sin librerías: CSS, Web Animations y View Transitions. Todo se apaga con «reducir movimiento».</p>
+      <table class="guia-tabla">
+        <thead><tr><th>Token</th><th>Valor</th><th>Uso</th></tr></thead>
+        <tbody>{movimiento.map(([a, b, c]) => <tr><td><code>{a}</code></td><td>{b}</td><td>{c}</td></tr>)}</tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    // Repetir la entrada del logo de la cabecera.
+    document.querySelector('[data-repetir-logo]')?.addEventListener('click', () => {
+      const d = document.documentElement;
+      delete d.dataset.logo;
+      void d.offsetWidth;
+      d.dataset.logo = 'entra';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</Base>

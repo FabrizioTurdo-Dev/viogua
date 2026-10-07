@@ -1,0 +1,37 @@
+{
+  "name": "viogua-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sitio de VioGua, estudio de diseño de interiores: landing, turno y test de estilo con moodboard.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "marca": "node scripts/marca.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0",
+    "astro": "^7.3.6",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "opentype.js": "^2.0.0",
+    "potrace": "^2.1.8",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
+    "subset-font": "^2.9.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  }
+}

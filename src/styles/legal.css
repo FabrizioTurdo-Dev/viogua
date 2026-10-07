@@ -1,0 +1,26 @@
+/* Páginas de texto: privacidad y 404 */
+.legal { max-width: calc(44rem + 2 * var(--gutter)); padding-block: clamp(2.5rem, 6vw, 4.5rem) 0; display: grid; gap: 1rem; }
+.legal h1 { font-size: var(--t-xxl); font-weight: 480; letter-spacing: -0.03em; }
+.legal h2 { font-size: 1.45rem; margin-top: 1.5rem; }
+.legal p, .legal li { color: var(--tinta-2); }
+.legal ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.5rem; }
+.legal li::marker { color: var(--cobalto); }
+.legal-fecha { font: 400 var(--t-xs) var(--f-tecnica); letter-spacing: 0.04em; }
+.legal-borrador { font-size: var(--t-s); }
+:root[data-theme='dark'] .legal-aviso { background: transparent; }
+.legal-aviso { padding: 1rem 1.2rem; border-left: 2px solid var(--rosa); background: color-mix(in srgb, var(--rosa) 12%, transparent); font-size: var(--t-s); }
+.legal .boton { margin-top: 1.5rem; }
+
+.perdida { display: grid; justify-items: center; gap: 1.25rem; text-align: center; padding-block: clamp(3rem, 8vw, 6rem) 0; }
+.perdida-puerta {
+  position: relative; width: 9rem; aspect-ratio: 3 / 4;
+  border: 1.1rem solid var(--rosa); border-bottom: 0; border-radius: 999px 999px 0 0;
+  background: linear-gradient(to top, color-mix(in srgb, var(--rosa) 45%, transparent), transparent 60%);
+}
+.perdida-puerta::after { content: ''; position: absolute; left: -2.5rem; right: -2.5rem; bottom: 0; height: 1px; background: var(--linea); }
+.perdida-puerta .destello { color: var(--cobalto); width: 1.5rem; left: -1.8rem; top: -0.8rem; }
+.perdida h1 { font-size: var(--t-xxl); font-weight: 480; max-width: 14ch; }
+.perdida h1 em { font-variation-settings: 'SOFT' 100, 'WONK' 1; color: var(--enfasis); }
+.perdida p { color: var(--tinta-2); max-width: 30rem; }
+.perdida-codigo { font: 500 var(--t-xs) var(--f-tecnica); letter-spacing: 0.12em; color: var(--cobalto); }
+.perdida .acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 0.5rem; }

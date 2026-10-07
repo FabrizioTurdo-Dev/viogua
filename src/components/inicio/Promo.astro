@@ -1,0 +1,38 @@
+---
+import Destello from '../marca/Destello.astro';
+import { PROMO } from '../../data/estudio';
+
+// Grilla 4 × 4: quince azulejos y uno de regalo.
+const azulejos = [
+  'az-arco', 'az-cuarto', 'az-damero', 'az-arco',
+  'az-damero', 'az-arco', 'az-arco', 'az-cuarto',
+  'az-cuarto', 'az-arco', 'az-arco', 'az-damero',
+  'regalo', 'az-damero', 'az-cuarto', 'az-arco',
+];
+const [cantidad, regalo] = PROMO.titulo.split(' + ');
+---
+
+<div class="envoltura">
+<section class="promo" id="promos" aria-labelledby="titulo-promo">
+  <div class="promo-azulejos" aria-hidden="true" data-revelar>
+    {
+      azulejos.map((a, i) =>
+        a === 'regalo' ? (
+          <span class="promo-regalo" style={`--i:${i}`}>
+            <span class="azulejo az-arco az-regalo" style={`--i:${i}`} />
+            <Destello />
+          </span>
+        ) : (
+          <span class={`azulejo ${a}`} style={`--i:${i}`} />
+        )
+      )
+    }
+  </div>
+  <div class="promo-texto" data-revelar style="--orden:1">
+    <p class="etiqueta">Promo vigente</p>
+    <h2 id="titulo-promo">{cantidad} <span class="sin-corte">+ {regalo}</span></h2>
+    <p>{PROMO.detalle}</p>
+    <a class="boton boton--linea" href="/test/?promo=1">Aprovechar la promo</a>
+  </div>
+</section>
+</div>

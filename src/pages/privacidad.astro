@@ -1,0 +1,63 @@
+---
+// Política de privacidad (borrador: lo valida VioGua). Ley 25.326 de Protección de Datos Personales.
+import '../styles/legal.css';
+import Base from '../layouts/Base.astro';
+import { ESTUDIO, instagramUrl } from '../data/estudio';
+const dev = import.meta.env.DEV;
+const contacto = ESTUDIO.email ?? `@${ESTUDIO.instagram} en Instagram`;
+---
+
+<Base
+  titulo={`Política de privacidad · ${ESTUDIO.nombre}`}
+  descripcion={`Qué datos pide ${ESTUDIO.nombre} al agendar una reunión, para qué los usa, con quién los comparte y cómo podés pedir que los borremos.`}
+>
+  <article class="legal envoltura">
+    <p class="etiqueta">Legal</p>
+    <h1>Política de privacidad</h1>
+    {dev && <p class="legal-borrador"><span class="pendiente">borrador</span> Texto a validar por {ESTUDIO.nombre} antes de publicar.</p>}
+    <p class="legal-fecha">Última actualización: octubre de 2026</p>
+
+    <h2>Quién es responsable de tus datos</h2>
+    <p>{ESTUDIO.nombre}, estudio de diseño de interiores con base en {ESTUDIO.pais}. Para cualquier consulta sobre tus datos podés escribirnos a {ESTUDIO.email ? <a href={`mailto:${ESTUDIO.email}`}>{ESTUDIO.email}</a> : <a href={instagramUrl} rel="noopener">{contacto}</a>}.</p>
+
+    <h2>Qué datos te pedimos</h2>
+    <ul>
+      <li>Al agendar una reunión: tu nombre, tu email, tu WhatsApp, los ambientes que querés diseñar y, si querés, fotos de esos ambientes.</li>
+      <li>Si hacés el test de estilo: los estilos, colores, sensaciones y materiales que elegís, y la imagen del moodboard que se arma con ellos.</li>
+    </ul>
+    <p>No pedimos datos sensibles ni datos de pago.</p>
+
+    <h2>Para qué los usamos</h2>
+    <ul>
+      <li>Coordinar la reunión: crear el evento en nuestra agenda, mandarte la invitación con el link de la videollamada y confirmarte el turno por WhatsApp.</li>
+      <li>Preparar la reunión: conocer tus ambientes y tu estilo antes de la charla.</li>
+      <li>Escribirte por temas de tu proyecto. No te vamos a mandar publicidad sin tu permiso.</li>
+    </ul>
+    <p>Usamos tus datos porque nos das tu consentimiento al agendar. Podés retirarlo cuando quieras.</p>
+
+    <h2>Con quién los compartimos</h2>
+    <p>No vendemos ni cedemos tus datos. Para que el sitio funcione usamos estos proveedores, que los tratan por cuenta nuestra:</p>
+    <ul>
+      <li>Google (agenda, invitación por email y videollamada por Google Meet).</li>
+      <li>Supabase (almacenamiento de los datos del turno y del test).</li>
+      <li>Meta (envío de la confirmación por WhatsApp).</li>
+      <li>Vercel (alojamiento del sitio).</li>
+    </ul>
+    <p>Algunos de estos proveedores guardan información fuera de Argentina, con sus propias medidas de seguridad.</p>
+
+    <h2>Cuánto tiempo los guardamos</h2>
+    <p>Mientras dure la relación por tu proyecto y, después, el tiempo necesario para cumplir obligaciones legales. Si no seguimos con el proyecto, podés pedir que los borremos en cualquier momento.</p>
+
+    <h2>En tu navegador</h2>
+    <p>Para que no pierdas lo que venías haciendo, el sitio guarda tu avance del turno y del test, y el modo claro u oscuro que elegiste, en el almacenamiento local de tu navegador. No usamos cookies de seguimiento ni publicidad.</p>
+
+    <h2>Tus derechos</h2>
+    <p>Podés pedir acceso a tus datos, corregirlos o que los eliminemos, escribiéndonos por los medios de contacto de arriba. Respondemos dentro de los plazos que fija la Ley 25.326.</p>
+    <p class="legal-aviso">
+      La AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, en su carácter de Órgano de Control de la Ley N° 25.326, tiene la
+      atribución de atender las denuncias y reclamos que interpongan quienes resulten afectados en sus derechos por
+      incumplimiento de las normas vigentes en materia de protección de datos personales.
+    </p>
+    <p><a class="boton boton--linea" href="/">Volver al inicio</a></p>
+  </article>
+</Base>

@@ -1,0 +1,34 @@
+---
+import { PILARES } from '../../data/estudio';
+
+// Las muestras de cada ficha: dibujos de muestrario con los colores de la marca.
+const damero = Array.from({ length: 20 }, (_, i) => {
+  const fila = Math.floor(i / 4), col = i % 4;
+  return `<rect x="${col * 40 + (fila % 2) * 20}" y="${fila * 20}" width="20" height="20" fill="#fcbcd4"/>`;
+}).join('');
+const MUESTRAS = [
+  '<rect width="160" height="100" fill="#fcbcd4"/><circle cx="80" cy="46" r="18" fill="#fff"/><rect x="56" y="54" width="48" height="46" fill="#fff"/>',
+  '<defs><pattern id="rejilla" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width=".6"/></pattern></defs><rect width="160" height="100" fill="#0066ff"/><rect width="160" height="100" fill="url(#rejilla)"/><path d="M40 34H92M40 34V84" stroke="#fff" stroke-width="2.4" fill="none"/><g stroke="#fff" stroke-width="1" fill="none"><path d="M62 16H138M62 12L66 20M138 12L134 20"/><path d="M24 30V88M20 34L28 30M20 88L28 84"/><path d="M82 84H148M82 80L86 88M148 80L144 88"/></g><g fill="#fff" font-family="DM Mono, monospace" font-size="7" text-anchor="middle"><rect x="88" y="11" width="22" height="10" fill="#0066ff" stroke="none"/><text x="99" y="18">4.20</text><rect x="14" y="54" width="20" height="10" fill="#0066ff"/><text x="24" y="61" transform="rotate(-90 24 59)">2.80</text><rect x="104" y="79" width="22" height="10" fill="#0066ff"/><text x="115" y="86">3.10</text></g>',
+  `<rect width="160" height="100" fill="#0066ff"/>${damero}`,
+  '<rect width="160" height="100" fill="#0066ff"/><path d="M0 100V28A72 72 0 0 1 72 100Z" fill="#fcbcd4"/><path d="M88 0H160V70A72 72 0 0 1 88 0Z" fill="#fff"/>',
+];
+---
+
+<section class="seccion azul envoltura" id="pilares" aria-labelledby="titulo-pilares">
+  <div class="seccion-cabeza" data-revelar>
+    <p class="etiqueta">Nuestros pilares</p>
+    <h2 id="titulo-pilares">Lo que sostiene cada proyecto</h2>
+  </div>
+  <ul class="fichas">
+    {
+      PILARES.map((p, i) => (
+        <li class="ficha" data-revelar style={`--orden:${i}`}>
+          <svg class="ficha-muestra" viewBox="0 0 160 100" aria-hidden="true" focusable="false" set:html={MUESTRAS[i]} />
+          <p class="ficha-codigo">{p.codigo}</p>
+          <h3>{p.titulo}</h3>
+          <p>{p.texto}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>

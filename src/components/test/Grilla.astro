@@ -1,0 +1,62 @@
+---
+// Una grilla de opciones del test, generada en el build (el JS solo maneja la selección).
+import { Image } from 'astro:assets';
+import { COLORES, ESTILOS, MATERIALES, SENSACIONES, type Tipo } from '../../data/test';
+import { fotoEstilo, fotoMaterial } from '../../data/fotos';
+
+interface Props {
+  tipo: Tipo;
+}
+const { tipo } = Astro.props;
+const tam = '(min-width: 62rem) 13rem, (min-width: 40rem) 30vw, 45vw';
+---
+
+<div class={`grilla grilla--${tipo}`} data-grilla={tipo}>
+  {
+    tipo === 'estilos' &&
+      ESTILOS.map(e => (
+        <button type="button" class="opcion" data-id={e.id} aria-pressed="false">
+          <span class="opcion-orden" aria-hidden="true" />
+          <span class="opcion-cara">
+            <Image src={fotoEstilo(e.id)} widths={[220, 340, 460]} sizes={tam} alt="" loading="lazy" />
+          </span>
+          <span class="opcion-nombre">{e.nombre}</span>
+        </button>
+      ))
+  }
+  {
+    tipo === 'colores' &&
+      COLORES.map(c => (
+        <button type="button" class="opcion" data-id={c.id} aria-pressed="false" style={`--c:${c.hex}`}>
+          <span class="opcion-orden" aria-hidden="true" />
+          <span class="opcion-cara" />
+          <span class="opcion-nombre">{c.nombre}</span>
+          <span class="opcion-dato">{c.hex}</span>
+        </button>
+      ))
+  }
+  {
+    tipo === 'sensaciones' &&
+      SENSACIONES.map(s => (
+        <button type="button" class="opcion" data-id={s.id} aria-pressed="false">
+          <span class="opcion-orden" aria-hidden="true" />
+          <span class="opcion-frase">
+            <q>{s.frase}</q>
+            <span class="opcion-dato">{s.nombre}</span>
+          </span>
+        </button>
+      ))
+  }
+  {
+    tipo === 'materiales' &&
+      MATERIALES.map(m => (
+        <button type="button" class="opcion" data-id={m.id} aria-pressed="false">
+          <span class="opcion-orden" aria-hidden="true" />
+          <span class="opcion-cara">
+            <Image src={fotoMaterial(m.id)} widths={[220, 340, 460]} sizes={tam} alt="" loading="lazy" />
+          </span>
+          <span class="opcion-nombre">{m.nombre}</span>
+        </button>
+      ))
+  }
+</div>

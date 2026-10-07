@@ -1,0 +1,21 @@
+---
+import { PASOS } from '../../data/estudio';
+---
+
+<section class="seccion envoltura" id="proceso" aria-labelledby="titulo-proceso">
+  <div class="seccion-cabeza" data-revelar>
+    <p class="etiqueta">Cómo trabajamos</p>
+    <h2 id="titulo-proceso">De la primera charla a tu moodboard</h2>
+  </div>
+  <ol class="recorrido">
+    {
+      PASOS.map((p, i) => (
+        <li class:list={['paso', { 'paso--opcional': 'opcional' in p }]} data-revelar style={`--orden:${i}`}>
+          <span class="paso-marca" aria-hidden="true">{i + 1}</span>
+          <h3>{p.titulo}</h3>
+          <p>{p.texto}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>

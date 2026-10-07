@@ -1,0 +1,9 @@
+---
+import { ginkgo } from '../../scripts/ginkgo';
+interface Props {
+  class?: string;
+}
+const { class: clase } = Astro.props;
+---
+
+<span class:list={['ginkgo', clase]} aria-hidden="true" set:html={ginkgo()} />

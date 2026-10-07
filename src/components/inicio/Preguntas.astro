@@ -1,0 +1,23 @@
+---
+import { PREGUNTAS } from '../../data/estudio';
+---
+
+<section class="seccion preguntas envoltura" id="preguntas" aria-labelledby="titulo-preguntas">
+  <div class="seccion-cabeza" data-revelar>
+    <p class="etiqueta">Preguntas frecuentes</p>
+    <h2 id="titulo-preguntas">Lo que suelen preguntarnos</h2>
+  </div>
+  <div class="preguntas-lista" data-revelar style="--orden:1">
+    {
+      PREGUNTAS.map((p, i) => (
+        <details class="pregunta" name="preguntas" open={i === 0}>
+          <summary>
+            {p.pregunta}
+            <span class="pregunta-signo" aria-hidden="true" />
+          </summary>
+          <p>{p.respuesta}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>

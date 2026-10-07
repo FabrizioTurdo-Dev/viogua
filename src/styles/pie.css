@@ -1,0 +1,49 @@
+/* Footer: bloque azul a todo el ancho, en ambos temas. */
+.pie {
+  margin-top: clamp(4rem, 9vw, 7.5rem);
+  padding-block: clamp(3rem, 7vw, 5rem) 1.5rem;
+  background: var(--bloque);
+  color: var(--tinta);
+  font-size: var(--t-s);
+}
+.pie a:not(.boton) { color: inherit; }
+.pie .etiqueta { color: var(--tinta); }
+
+/* Columnas */
+.pie-columnas { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+@media (min-width: 40rem) { .pie-columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .pie-columnas { grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)); gap: 2.5rem; } }
+.pie-marca { display: grid; gap: 1rem; align-content: start; }
+.pie-marca .marca { color: var(--tinta); }
+.pie-marca p { max-width: 22rem; color: var(--tinta); line-height: 1.55; }
+.pie-col { display: grid; gap: 0.8rem; align-content: start; }
+.pie-col h3 { font-size: var(--t-xs); }
+.pie-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+.pie-col li { min-height: 2rem; display: flex; align-items: center; }
+.pie-col a { padding-block: 0.3rem; text-decoration: none; }
+.pie-dato { display: inline-flex; align-items: center; gap: 0.55rem; }
+.pie-dato .icono { color: var(--acento-pie); }
+
+/* Barra inferior */
+.pie-barra {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1.5rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem); padding-top: 1.25rem;
+  border-top: 1px solid var(--linea);
+  color: var(--tinta);
+}
+.pie-barra a { text-decoration: none; }
+.pie-creditos summary { cursor: pointer; list-style: none; }
+.pie-creditos summary::-webkit-details-marker { display: none; }
+.pie-creditos summary::after { content: ' +'; font-family: var(--f-tecnica); }
+.pie-creditos[open] summary::after { content: ' −'; }
+.pie-creditos[open] { flex-basis: 100%; order: 5; }
+.pie-creditos p { margin-top: 0.6rem; max-width: 60rem; font-size: var(--t-xs); line-height: 1.6; }
+.pie-arriba { display: inline-flex; align-items: center; gap: 0.35rem; margin-left: auto; }
+
+/* Crédito del desarrollador */
+.pie-credito { margin-top: 1.25rem; font: 400 var(--t-xs) / 1.4 var(--f-tecnica); letter-spacing: 0.04em; }
+.pie-credito a { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--tinta); transition: color var(--dur-2) var(--ease); }
+.pie-credito .icono { color: var(--acento-pie); transition: transform var(--dur-3) var(--ease-resorte); }
+.pie-credito a:hover .icono { transform: rotate(-12deg) scale(1.15); }
+.pie-credito-nombre { background: linear-gradient(var(--acento-pie), var(--acento-pie)) no-repeat 0 100% / 0 1.5px; padding-bottom: 2px; transition: background-size var(--dur-3) var(--ease); }
+.pie-credito a:hover .pie-credito-nombre, .pie-credito a:focus-visible .pie-credito-nombre { background-size: 100% 1.5px; }

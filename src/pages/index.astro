@@ -1,0 +1,29 @@
+---
+import '../styles/inicio.css';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/inicio/Hero.astro';
+import Azulejos from '../components/inicio/Azulejos.astro';
+import Pilares from '../components/inicio/Pilares.astro';
+import Proceso from '../components/inicio/Proceso.astro';
+import MoodboardPuerta from '../components/inicio/MoodboardPuerta.astro';
+import Promo from '../components/inicio/Promo.astro';
+import SobreVioGua from '../components/inicio/SobreVioGua.astro';
+import Preguntas from '../components/inicio/Preguntas.astro';
+import { ESTUDIO } from '../data/estudio';
+import { esquemaEstudio } from '../data/esquema';
+---
+
+<Base
+  titulo={`${ESTUDIO.nombre} · Diseño de interiores por videollamada`}
+  descripcion="Estudio de diseño de interiores. Agendá una videollamada, contanos qué ambientes querés transformar y hacé el test de estilo: te regalamos tu moodboard."
+  datos={esquemaEstudio(Astro.site!)}
+>
+  <Hero />
+  <Azulejos />
+  <Pilares />
+  <Proceso />
+  <MoodboardPuerta />
+  <Promo />
+  <SobreVioGua />
+  <Preguntas />
+</Base>
