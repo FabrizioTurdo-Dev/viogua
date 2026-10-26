@@ -1,4 +1,4 @@
-// /robots.txt: todo indexable salvo la guía de estilo. Los rastreadores de búsqueda con IA
+// /robots.txt: todo indexable salvo la guía de estilo y el panel del estudio. Los rastreadores de búsqueda con IA
 // tienen permiso explícito: al estudio le conviene aparecer en sus respuestas.
 import type { APIRoute } from 'astro';
 
@@ -21,8 +21,9 @@ export const GET: APIRoute = ({ site }) => {
     'User-agent: *',
     'Allow: /',
     'Disallow: /estilo/',
+    'Disallow: /estudio/',
     '',
-    ...BUSCADORES_IA.flatMap(bot => [`User-agent: ${bot}`, 'Allow: /', 'Disallow: /estilo/', '']),
+    ...BUSCADORES_IA.flatMap(bot => [`User-agent: ${bot}`, 'Allow: /', 'Disallow: /estilo/', 'Disallow: /estudio/', '']),
     `Sitemap: ${new URL('/sitemap-index.xml', site).href}`,
     '',
   ].join('\n');

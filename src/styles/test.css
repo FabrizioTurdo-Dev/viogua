@@ -3,7 +3,6 @@
 .test-cabeza { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
 .test-cabeza .enlace { white-space: nowrap; }
 .test-contador { font: 500 var(--t-xs) var(--f-tecnica); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-2); text-align: center; }
-.modo-demo { display: block; margin-top: 0.2rem; font: 400 0.6875rem var(--f-tecnica); letter-spacing: 0.04em; text-transform: none; opacity: 0.75; }
 
 /* Tramos: el progreso como una cota que crece */
 .tramos { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; grid-template-columns: 4fr 5fr 3fr; gap: 0.4rem; }
@@ -28,7 +27,6 @@
 .paso-pie > .boton { margin-left: auto; }
 .paso-pie .boton.listo { animation: listo 0.9s var(--ease) both; }
 @keyframes listo { 40% { transform: translateY(-3px) scale(1.03); box-shadow: var(--luz); } }
-.error { color: var(--cobalto); font-size: var(--t-s); font-weight: 600; min-height: 1.2em; }
 .seleccion { font: 500 var(--t-s) var(--f-tecnica); color: var(--tinta-2); }
 .seleccion b { color: var(--cobalto); font-weight: 500; }
 
@@ -45,7 +43,7 @@
 @media (min-width: 48rem) { .cantidades { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .cantidad {
   position: relative; display: grid; gap: 0.3rem; align-content: end;
-  min-height: 9rem; padding: 1rem;
+  min-height: 11rem; padding: 1rem;
   border-radius: 999px 999px 0.5rem 0.5rem;
   background: var(--yeso); box-shadow: inset 0 0 0 1px var(--linea);
   cursor: pointer; text-align: center; font-size: var(--t-s); color: var(--tinta-2);
@@ -57,6 +55,11 @@
 .cantidad:hover { box-shadow: inset 0 0 0 1.5px var(--cobalto); transform: translateY(-2px); }
 .cantidad:has(input:checked) { background: var(--acento); color: var(--sobre-acento); box-shadow: var(--elev-1); }
 .cantidad:has(input:checked) .cantidad-num, .cantidad:has(input:checked) .cantidad-num small { color: var(--sobre-acento); }
+.cantidad-precio {
+  margin-top: 0.45rem; padding-top: 0.55rem; border-top: 1px solid var(--linea);
+  font: 500 1.0625rem var(--f-tecnica); color: var(--cobalto); font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+}
+.cantidad:has(input:checked) .cantidad-precio { color: var(--sobre-acento); border-top-color: color-mix(in srgb, var(--sobre-acento) 35%, transparent); }
 .cantidad:has(input:focus-visible) { outline: 2px solid var(--cobalto); outline-offset: 3px; }
 .cantidad--promo::before {
   content: 'Promo'; position: absolute; top: 1.1rem; left: 50%; transform: translateX(-50%);
@@ -64,6 +67,13 @@
   font: 500 0.6875rem var(--f-tecnica); letter-spacing: 0.08em; text-transform: uppercase;
 }
 .cantidad--promo:has(input:checked)::before { background: var(--sobre-acento); color: var(--acento); }
+.desglose { display: grid; gap: 0.5rem; max-width: 30rem; }
+.desglose-lista { margin: 0; display: grid; }
+.desglose-fila { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-block: 0.5rem; border-bottom: 1px dashed var(--linea); font-size: var(--t-s); }
+.desglose-fila dt span { display: block; font: 400 var(--t-xs) / 1.4 var(--f-tecnica); color: var(--tinta-2); }
+.desglose-fila dd { margin: 0; font: 500 var(--t-s) var(--f-tecnica); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.desglose-total { border-bottom: 0; font-weight: 600; }
+.desglose-total dd { font-size: 1.0625rem; color: var(--cobalto); }
 
 /* ---------- 2. Ambientes ---------- */
 .ambientes { display: grid; gap: 0.9rem; }
@@ -90,22 +100,8 @@
 .foto-vista { width: 3rem; height: 3rem; border-radius: 0.3rem; object-fit: cover; animation: aparecer var(--dur-3) var(--ease); }
 .foto-quitar { margin-left: auto; }
 
-/* Campos */
-.campo {
-  width: 100%; min-width: 0; padding: 0.8rem 0.9rem; border-radius: 0.4rem;
-  border: 1px solid var(--linea); background: var(--papel); color: var(--tinta);
-  font: 400 1rem / 1.3 var(--f-texto);
-  transition: border-color var(--dur-2), box-shadow var(--dur-2);
-}
+/* Campos (el resto, en base.css) */
 .ambiente .campo { background: var(--papel); }
-.campo:focus { outline: 2px solid var(--cobalto); outline-offset: 0; border-color: transparent; }
-.campo[aria-invalid='true'] { border-color: var(--cobalto); border-style: dashed; border-width: 1.5px; }
-.campo::placeholder { color: var(--tinta-2); opacity: 0.6; }
-.campo-grupo { display: grid; gap: 0.35rem; }
-.campo-grupo > label { font-weight: 600; font-size: var(--t-s); }
-.campo-ayuda { font-size: var(--t-xs); color: var(--tinta-2); }
-.campo-error { font-size: var(--t-xs); font-weight: 600; color: var(--cobalto); min-height: 0; }
-.campo-error:empty { display: none; }
 .consentimiento { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.6rem; align-items: start; font-size: var(--t-s); color: var(--tinta-2); cursor: pointer; }
 .consentimiento input { width: 1.15rem; height: 1.15rem; margin: 0.1rem 0 0; accent-color: var(--acento); }
 .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -162,6 +158,8 @@
 .turno-hora { font: 500 1.5rem var(--f-tecnica); color: var(--cobalto); font-variant-numeric: tabular-nums; }
 .turno-lugar { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--tinta-2); font-size: var(--t-s); }
 .turno-ambientes { list-style: none; padding: 0; margin: 0.75rem 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; }
+.turno-total { margin-top: 0.75rem; font: 500 0.9375rem var(--f-tecnica); color: var(--cobalto); font-variant-numeric: tabular-nums; }
+.turno-desglose { max-width: 18rem; font: 400 var(--t-xs) / 1.45 var(--f-tecnica); color: var(--tinta-2); }
 .turno-ambientes li { padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid var(--linea); font-size: 0.8125rem; }
 .turno-ficha .cota span { background: var(--papel); }
 .turno-ficha .cota--v { right: 0.6rem; top: 2rem; bottom: 2.5rem; }
@@ -178,8 +176,12 @@
   background: var(--burbuja); color: var(--sobre-burbuja); font-size: 0.9375rem; line-height: 1.45;
   white-space: pre-line; box-shadow: 0 1px 1px rgb(0 0 0 / 0.12); overflow-wrap: anywhere;
 }
-.mensaje-wa .boton { background: var(--azul); color: #ffffff; }
+.wa-burbuja--propia { justify-self: end; border-radius: 0.7rem 0.2rem 0.7rem 0.7rem; }
+/* En cianotipo la tarjeta y la burbuja se dibujan con línea, como en el concepto: nada en yeso. */
+:root[data-theme='dark'] .mensaje-wa { background: transparent; color: var(--tinta); box-shadow: inset 0 0 0 1px var(--linea); }
+:root[data-theme='dark'] .wa-burbuja { box-shadow: inset 0 0 0 1px var(--linea); }
 .confirmacion-email { font-size: var(--t-s); color: var(--tinta-2); }
+.otro-turno { justify-self: start; margin-top: -0.5rem; }
 .invitacion { display: grid; gap: 1rem; justify-items: center; text-align: center; margin-top: 1.5rem; padding-top: 2rem; border-top: 1px dashed var(--linea); }
 .invitacion p { max-width: 34rem; color: var(--tinta-2); }
 
@@ -231,16 +233,17 @@
 .opcion[aria-pressed='true'] .opcion-orden { transform: scale(1); }
 .grilla--colores .opcion-orden { top: 0.25rem; right: 0.25rem; width: 1.4rem; height: 1.4rem; font-size: 0.6875rem; }
 .opcion-frase {
-  display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
-  min-height: 9.5rem; padding: 1.1rem; border-radius: 0.4rem;
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 0.5rem;
+  min-height: 8.5rem; padding: 1rem; border-radius: 0.4rem;
   background: var(--yeso); box-shadow: inset 0 0 0 1px var(--linea);
   transition: background-color var(--dur-2), color var(--dur-2), box-shadow var(--dur-2), transform var(--dur-3) var(--ease);
 }
-.opcion-frase q { quotes: none; font: italic 420 1.3rem / 1.15 var(--f-display); font-variation-settings: 'SOFT' 100, 'WONK' 1; text-wrap: balance; }
-.opcion-frase .opcion-dato { text-transform: uppercase; letter-spacing: 0.08em; }
+.opcion-titulo { font: 520 clamp(1.0625rem, 4.8vw, 1.5rem) / 1.05 var(--f-display); font-variation-settings: 'SOFT' 100; letter-spacing: -0.01em; }
+.grilla--sensaciones .opcion-orden { top: auto; bottom: 0.55rem; right: 0.55rem; }
+.opcion-frase q { quotes: '«' '»'; font: italic 400 1rem / 1.3 var(--f-display); font-variation-settings: 'SOFT' 100, 'WONK' 1; color: var(--tinta-2); text-wrap: pretty; }
 .opcion:hover .opcion-frase { box-shadow: inset 0 0 0 1.5px var(--cobalto); transform: translateY(-3px); }
 .opcion[aria-pressed='true'] .opcion-frase { background: var(--acento); color: var(--sobre-acento); box-shadow: none; }
-.opcion[aria-pressed='true'] .opcion-frase .opcion-dato { color: var(--sobre-acento); opacity: 0.85; }
+.opcion[aria-pressed='true'] .opcion-frase q { color: var(--sobre-acento); opacity: 0.85; }
 .opcion.lleno { animation: no 0.32s var(--ease); }
 @keyframes no { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
@@ -268,7 +271,7 @@
 .resultado-cuerpo { display: grid; gap: 2rem; }
 @media (min-width: 56rem) { .resultado-cuerpo { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 2.75rem; } }
 .resultado-tablero { margin: 0; display: grid; gap: 1rem; align-content: start; }
-.firma { justify-self: center; font: 500 var(--t-s) var(--f-tecnica); letter-spacing: 0.12em; color: #ffffff; }
+.firma { justify-self: center; font: 500 var(--t-s) var(--f-tecnica); letter-spacing: 0.12em; color: var(--cobalto); }
 
 .collage { container-type: inline-size; position: relative; aspect-ratio: 100 / 136; width: 100%; }
 .pieza { position: absolute; margin: 0; overflow: hidden; background: #ffffff; }
@@ -278,7 +281,7 @@
 .pieza--arco { border-radius: 999px 999px 1.2cqi 1.2cqi; }
 .pieza--circulo { border-radius: 50%; }
 .pieza img { width: 100%; height: 100%; object-fit: cover; }
-.pieza--foto.pieza--circulo { box-shadow: 0 0 0 0.9cqi #ffffff; }
+.pieza--foto.pieza--circulo { box-shadow: 0 0 0 0.9cqi var(--papel); } /* anillo del color del fondo: separa sin agregar otro color */
 .pieza-chip {
   position: absolute; left: 1.4cqi; bottom: 1.4cqi; max-width: calc(100% - 2.8cqi);
   padding: 0.5cqi 1.2cqi; border-radius: 99px; background: rgb(255 255 255 / 0.95); color: #0066ff;
@@ -287,18 +290,19 @@
 .pieza--circulo .pieza-chip { left: 50%; transform: translateX(-50%); bottom: 12%; }
 .pieza--frase { display: flex; flex-direction: column; justify-content: space-between; padding: 2.2cqi 2.4cqi; color: #0066ff; }
 .pieza--frase.pieza--rosa { background: var(--rosa); color: var(--sobre-rosa); }
+.pieza--frase:not(.pieza--rosa) { box-shadow: inset 0 0 0 1px var(--linea); } /* en yeso, la tarjeta blanca se dibuja con línea */
 .pieza--frase p { font: italic 420 clamp(0.72rem, 3.3cqi, 1.3rem) / 1.08 var(--f-display); font-variation-settings: 'SOFT' 100, 'WONK' 1; text-wrap: balance; }
 .pieza--frase span { font: 500 clamp(0.55rem, 1.6cqi, 0.7rem) var(--f-tecnica); letter-spacing: 0.08em; text-transform: uppercase; }
-.pieza--color { box-shadow: 0 0 0 0.6cqi #ffffff; }
+.pieza--color { box-shadow: 0 0 0 0.6cqi var(--papel); }
 
 .resultado-lado { display: grid; gap: 1.5rem; align-content: start; justify-items: start; }
 .leyenda { display: grid; gap: 1.5rem 1.25rem; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
 .leyenda-grupo { display: grid; gap: 0.55rem; align-content: start; min-width: 0; }
-.leyenda-grupo h3 { display: grid; gap: 0.45rem; font-size: 1.45rem; font-weight: 520; color: #ffffff; }
+.leyenda-grupo h3 { display: grid; gap: 0.45rem; font-size: 1.45rem; font-weight: 520; color: var(--tinta); }
 .leyenda-grupo h3::after { content: ''; width: 1.75rem; height: 2px; background: var(--rosa); border-radius: 2px; }
-.leyenda-numero { font: 500 var(--t-xs) var(--f-tecnica); letter-spacing: 0.1em; color: #ffffff; }
-.leyenda-grupo ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-weight: 400; color: #ffffff; }
+.leyenda-numero { font: 500 var(--t-xs) var(--f-tecnica); letter-spacing: 0.1em; color: var(--cobalto); }
+.leyenda-grupo ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-weight: 400; color: var(--tinta); }
 .leyenda-grupo li { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
-.leyenda-punto { width: 0.8rem; height: 0.8rem; border-radius: 50%; flex: none; background: var(--c); box-shadow: 0 0 0 1.5px rgb(255 255 255 / 0.85); }
+.leyenda-punto { width: 0.8rem; height: 0.8rem; border-radius: 50%; flex: none; background: var(--c); box-shadow: 0 0 0 1.5px var(--papel), 0 0 0 2.5px var(--linea); }
 .resultado-acciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .resultado-acciones .boton { gap: 0.5rem; }

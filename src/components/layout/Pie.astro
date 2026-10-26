@@ -1,15 +1,16 @@
 ---
-// Footer azul a todo el ancho: navegación, reuniones, créditos.
+// Footer a todo el ancho: navegación, contacto, reuniones, créditos.
 import '../../styles/pie.css';
 import Logo from '../marca/Logo.astro';
 import Icono from '../marca/Icono.astro';
-import { AGENDA, DESARROLLADOR, ESTUDIO, desarrolladorUrl } from '../../data/estudio';
+import { AGENDA, DESARROLLADOR, ESTUDIO, desarrolladorUrl, instagramUrl, whatsappUrl } from '../../data/estudio';
 import { MATERIALES } from '../../data/test';
+import { telefonoLegible } from '../../scripts/mensajes';
 
-const dev = import.meta.env.DEV;
 const enInicio = Astro.url.pathname === '/';
 const pre = enInicio ? '' : '/';
 const anio = new Date().getFullYear();
+const whatsapp = whatsappUrl();
 ---
 
 <footer class="pie" aria-label="Pie de página">
@@ -34,10 +35,23 @@ const anio = new Date().getFullYear();
       </nav>
 
       <div class="pie-col">
+        <h3 class="etiqueta">Contacto</h3>
+        <ul>
+          {
+            whatsapp && ESTUDIO.whatsapp && (
+              <li><a class="pie-dato subrayado" href={whatsapp} target="_blank" rel="noopener"><Icono nombre="mensaje" />{telefonoLegible(ESTUDIO.whatsapp)}</a></li>
+            )
+          }
+          {ESTUDIO.email && <li><a class="pie-dato subrayado" href={`mailto:${ESTUDIO.email}`}><Icono nombre="email" /><span class="pie-email">{ESTUDIO.email}</span></a></li>}
+          <li><a class="pie-dato subrayado" href={instagramUrl} target="_blank" rel="noopener"><Icono nombre="instagram" />@{ESTUDIO.instagram}</a></li>
+        </ul>
+      </div>
+
+      <div class="pie-col">
         <h3 class="etiqueta">Reuniones</h3>
         <ul>
           <li class="pie-dato"><Icono nombre="video" />Videollamada por {AGENDA.plataforma}</li>
-          <li class="pie-dato"><Icono nombre="reloj" /><span>{AGENDA.resumen}{dev && <span class="pendiente">ejemplo</span>}</span></li>
+          <li class="pie-dato"><Icono nombre="reloj" /><span>{AGENDA.resumen}</span></li>
         </ul>
       </div>
     </div>

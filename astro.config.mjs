@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // Dominio público. Hasta que Guada defina el suyo, el del preview de Vercel.
-const site = process.env.SITE_URL ?? 'https://viogua.vercel.app';
+const site = process.env.SITE_URL ?? 'https://vioguamvp.vercel.app';
 
 export default defineConfig({
   site,
@@ -11,7 +11,7 @@ export default defineConfig({
   server: { port: 5184 },
   integrations: [
     sitemap({
-      filter: pagina => !pagina.includes('/estilo/'),
+      filter: pagina => !pagina.includes('/estilo/') && !pagina.includes('/estudio/'),
       changefreq: 'monthly',
     }),
   ],

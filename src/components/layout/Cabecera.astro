@@ -25,8 +25,7 @@ const enlaces = [
     </nav>
 
     <div class="cabecera-acciones">
-      <button class="tema-boton redondo" type="button" aria-pressed="false" data-tema>
-        <span class="visualmente-oculto">Modo oscuro</span>
+      <button class="tema-boton" type="button" data-tema>
         <svg class="lampara" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <g class="lampara-luz">
             <path d="M12 21.5v1.2M7.2 19.4l-.9.9M16.8 19.4l.9.9M5 16.6H3.8M20.2 16.6H19" />
@@ -35,6 +34,10 @@ const enlaces = [
           <path class="lampara-pantalla" d="M5 15.5a7 7 0 0 1 14 0Z" />
           <circle class="lampara-foco" cx="12" cy="17" r="1.9" />
         </svg>
+        <!-- Como en el concepto: dice a qué modo pasa. El CSS muestra uno según data-theme. -->
+        <span class="visualmente-oculto">Pasar a modo </span>
+        <span class="tema-texto tema-texto--cianotipo">Cianotipo</span>
+        <span class="tema-texto tema-texto--yeso">Yeso</span>
       </button>
       <a class="boton boton--chico cabecera-agendar" href="/test/" data-astro-prefetch>Agendar</a>
       <button class="menu-boton redondo" type="button" aria-expanded="false" aria-controls="navegacion" data-menu>

@@ -8,7 +8,7 @@ import Grilla from '../components/test/Grilla.astro';
 import Icono from '../components/marca/Icono.astro';
 import IsotipoSvg from '../brand/isotipo.svg';
 import Monograma from '../brand/monograma.svg';
-import { AGENDA, ESTUDIO } from '../data/estudio';
+import { AGENDA, CON_BACKEND, ESTUDIO, POR_WHATSAPP, precio, whatsappUrl } from '../data/estudio';
 import { ESTILOS, MATERIALES } from '../data/test';
 import { fotoEstilo, fotoMaterial } from '../data/fotos';
 import { esquemaReunion } from '../data/esquema';
@@ -20,7 +20,7 @@ const fotos = {
   materiales: Object.fromEntries(await Promise.all(MATERIALES.map(async m => [m.id, await foto(fotoMaterial(m.id))]))),
 };
 const datos = { fotos, sitio: Astro.site!.href };
-const demo = !import.meta.env.PUBLIC_API_URL;
+const moodboardPorWhatsapp = whatsappUrl('¡Hola, VioGua! Hice el test de estilo y les mando mi moodboard.');
 ---
 
 <Base
@@ -34,10 +34,7 @@ const demo = !import.meta.env.PUBLIC_API_URL;
   <div class="test envoltura" data-test>
     <div class="test-cabeza">
       <button class="enlace" id="test-volver" type="button">← Volver</button>
-      <p class="test-contador">
-        <span id="test-contador" aria-live="polite"></span>
-        {demo && <span class="modo-demo">Modo demo · los turnos no se guardan</span>}
-      </p>
+      <p class="test-contador"><span id="test-contador" aria-live="polite"></span></p>
       <button class="enlace" id="test-reiniciar" type="button">Empezar de nuevo</button>
     </div>
 
@@ -55,10 +52,14 @@ const demo = !import.meta.env.PUBLIC_API_URL;
         <p class="etiqueta">Paso 1 · Turno</p>
         <h2 tabindex="-1">¿Cuántos ambientes querés diseñar?</h2>
         <div class="cantidades" role="radiogroup" aria-label="Cantidad de ambientes">
-          <label class="cantidad"><input type="radio" name="cantidad" value="1" /><span class="cantidad-num">1</span><span>ambiente</span></label>
-          <label class="cantidad"><input type="radio" name="cantidad" value="2" /><span class="cantidad-num">2</span><span>ambientes</span></label>
-          <label class="cantidad"><input type="radio" name="cantidad" value="3" /><span class="cantidad-num">3</span><span>ambientes</span></label>
-          <label class="cantidad cantidad--promo"><input type="radio" name="cantidad" value="4" /><span class="cantidad-num">4<small>+1</small></span><span>ambientes y uno de regalo</span></label>
+          <label class="cantidad"><input type="radio" name="cantidad" value="1" /><span class="cantidad-num">1</span><span>ambiente</span><span class="cantidad-precio">{precio(1)}</span></label>
+          <label class="cantidad"><input type="radio" name="cantidad" value="2" /><span class="cantidad-num">2</span><span>ambientes</span><span class="cantidad-precio">{precio(2)}</span></label>
+          <label class="cantidad"><input type="radio" name="cantidad" value="3" /><span class="cantidad-num">3</span><span>ambientes</span><span class="cantidad-precio">{precio(3)}</span></label>
+          <label class="cantidad cantidad--promo"><input type="radio" name="cantidad" value="4" /><span class="cantidad-num">4<small>+1</small></span><span>ambientes y uno de regalo</span><span class="cantidad-precio">{precio(4)}</span></label>
+        </div>
+        <div class="desglose">
+          <dl class="desglose-lista" id="desglose" aria-label="Detalle del precio" hidden></dl>
+          <p class="nota">Render y búsqueda de presupuesto se cobran por ambiente; el acompañamiento del proceso, una sola vez.</p>
         </div>
         <div class="paso-pie">
           <span class="error" id="error-cantidad" role="alert"></span>
@@ -70,20 +71,28 @@ const demo = !import.meta.env.PUBLIC_API_URL;
       <section class="paso-test" data-paso="ambientes" hidden>
         <p class="etiqueta">Paso 2 · Turno</p>
         <h2 tabindex="-1">¿Qué ambientes son?</h2>
-        <p class="bajada">Escribí el nombre de cada uno. Las fotos son opcionales, pero nos ayudan a llegar a la reunión con ideas.</p>
+        <p class="bajada">
+          {CON_BACKEND
+            ? 'Escribí el nombre de cada uno. Las fotos son opcionales, pero nos ayudan a llegar a la reunión con ideas.'
+            : 'Escribí el nombre de cada uno. Si querés, después nos mandás fotos por WhatsApp: nos ayudan a llegar a la reunión con ideas.'}
+        </p>
         <div class="ambientes" id="lista-ambientes"></div>
         <template id="plantilla-ambiente">
           <div class="ambiente">
             <div class="ambiente-cabeza"><label></label></div>
             <input class="campo" type="text" autocomplete="off" maxlength="60" placeholder="Living, dormitorio principal…" />
             <div class="chips"></div>
-            <div class="foto">
-              <input type="file" accept="image/*" />
-              <label class="foto-boton"><Icono nombre="camara" /><span>Agregar foto</span></label>
-              <span class="foto-ayuda">opcional · podés arrastrarla acá</span>
-              <img class="foto-vista" alt="" hidden />
-              <button class="enlace foto-quitar" type="button" hidden>Quitar</button>
-            </div>
+            {
+              CON_BACKEND && (
+                <div class="foto">
+                  <input type="file" accept="image/*" />
+                  <label class="foto-boton"><Icono nombre="camara" /><span>Agregar foto</span></label>
+                  <span class="foto-ayuda">opcional · podés arrastrarla acá</span>
+                  <img class="foto-vista" alt="" hidden />
+                  <button class="enlace foto-quitar" type="button" hidden>Quitar</button>
+                </div>
+              )
+            }
           </div>
         </template>
         <div class="paso-pie">
@@ -142,22 +151,32 @@ const demo = !import.meta.env.PUBLIC_API_URL;
         </form>
         <div class="paso-pie">
           <span class="error" id="error-reunion" role="alert"></span>
-          <button class="boton" type="submit" form="form-reunion" id="confirmar-reunion">Confirmar reunión</button>
+          <button class="boton" type="submit" form="form-reunion" id="confirmar-reunion">{POR_WHATSAPP ? 'Pedir reunión' : 'Confirmar reunión'}</button>
         </div>
       </section>
 
       <!-- 4. Confirmación -->
       <section class="paso-test" data-paso="confirmada" hidden>
         <p class="etiqueta">Paso 4 · Turno</p>
-        <h2 tabindex="-1">¡Reunión confirmada!</h2>
+        <h2 tabindex="-1">{POR_WHATSAPP ? 'Último paso: mandanos tu pedido' : '¡Reunión confirmada!'}</h2>
+        {
+          POR_WHATSAPP && (
+            <p class="bajada">
+              Tocá «Enviar por WhatsApp»: el mensaje ya está escrito. Te respondemos para confirmar el turno y te mandamos la
+              invitación con el link de {AGENDA.plataforma}.
+            </p>
+          )
+        }
         <div class="confirmacion">
           <div class="turno-ficha">
             <div class="turno">
-              <p class="etiqueta">Tu reunión</p>
+              <p class="etiqueta">{POR_WHATSAPP ? 'Tu pedido' : 'Tu reunión'}</p>
               <p class="turno-dia" id="turno-dia"></p>
               <p class="turno-hora" id="turno-hora"></p>
               <p class="turno-lugar"><Icono nombre="video" />Videollamada por {AGENDA.plataforma}</p>
               <ul class="turno-ambientes" id="turno-ambientes"></ul>
+              <p class="turno-total" id="turno-total"></p>
+              <p class="turno-desglose" id="turno-desglose"></p>
             </div>
             <div class="cota cota--v" aria-hidden="true"><span>{AGENDA.duracionMin} min</span></div>
             <div class="cota cota--h" aria-hidden="true"><span>Google Meet</span></div>
@@ -170,11 +189,14 @@ const demo = !import.meta.env.PUBLIC_API_URL;
                 <p class="wa-estado" id="wa-estado"></p>
               </div>
             </div>
-            <p class="wa-burbuja" id="wa-mensaje"></p>
-            <a class="boton boton--chico" id="wa-confirmar" href="#" target="_blank" rel="noopener" hidden><Icono nombre="mensaje" />Confirmá por WhatsApp</a>
+            <p class:list={['wa-burbuja', POR_WHATSAPP && 'wa-burbuja--propia']} id="wa-mensaje"></p>
+            <a class:list={['boton', !POR_WHATSAPP && 'boton--chico']} id="wa-confirmar" href="#" target="_blank" rel="noopener" hidden>
+              <Icono nombre="mensaje" />{POR_WHATSAPP ? 'Enviar por WhatsApp' : 'Confirmá por WhatsApp'}
+            </a>
           </div>
         </div>
         <p class="confirmacion-email" id="confirmacion-email"></p>
+        <button class="enlace otro-turno" type="button" id="otro-turno">Agendar otra reunión</button>
         <div class="invitacion">
           <p>No es obligatorio, pero nos encantaría que hagas este test rápido para conocer tu estilo antes de la reunión.</p>
           <button class="boton boton--grande" type="button" data-siguiente="intro">¿Querés hacer un test para saber tu tipo de estilo?</button>
@@ -261,6 +283,14 @@ const demo = !import.meta.env.PUBLIC_API_URL;
               <button class="boton boton--linea" type="button" id="ver-imagen">Ver como imagen</button>
             </div>
             <p class="nota">Formato historia de Instagram, listo para compartir.</p>
+            {
+              !CON_BACKEND && moodboardPorWhatsapp && (
+                <p class="nota">
+                  ¿Querés que lo veamos antes de la reunión? Guardalo y mandánoslo por{' '}
+                  <a href={moodboardPorWhatsapp} target="_blank" rel="noopener">WhatsApp</a>.
+                </p>
+              )
+            }
             <button class="enlace" type="button" id="repetir-test">Hacer el test de nuevo</button>
           </div>
         </div>

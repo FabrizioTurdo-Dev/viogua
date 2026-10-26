@@ -2,7 +2,7 @@
 // Política de privacidad (borrador: lo valida VioGua). Ley 25.326 de Protección de Datos Personales.
 import '../styles/legal.css';
 import Base from '../layouts/Base.astro';
-import { ESTUDIO, instagramUrl } from '../data/estudio';
+import { CON_BACKEND, ESTUDIO, instagramUrl } from '../data/estudio';
 const dev = import.meta.env.DEV;
 const contacto = ESTUDIO.email ?? `@${ESTUDIO.instagram} en Instagram`;
 ---
@@ -39,8 +39,8 @@ const contacto = ESTUDIO.email ?? `@${ESTUDIO.instagram} en Instagram`;
     <p>No vendemos ni cedemos tus datos. Para que el sitio funcione usamos estos proveedores, que los tratan por cuenta nuestra:</p>
     <ul>
       <li>Google (agenda, invitación por email y videollamada por Google Meet).</li>
-      <li>Supabase (almacenamiento de los datos del turno y del test).</li>
-      <li>Meta (envío de la confirmación por WhatsApp).</li>
+      {CON_BACKEND && <li>Supabase (almacenamiento de los datos del turno y del test).</li>}
+      <li>Meta (WhatsApp, por donde coordinamos el turno).</li>
       <li>Vercel (alojamiento del sitio).</li>
     </ul>
     <p>Algunos de estos proveedores guardan información fuera de Argentina, con sus propias medidas de seguridad.</p>

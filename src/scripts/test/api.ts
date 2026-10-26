@@ -1,11 +1,9 @@
-// Conexión con el backend (Supabase Edge Functions). Sin PUBLIC_API_URL queda el modo demo:
-// horarios de ejemplo y confirmación local, sin guardar ni enviar nada.
-import { AGENDA } from '../../data/estudio';
+// Conexión con el backend (Supabase Edge Functions). Sin PUBLIC_API_URL (CON_BACKEND en false) el
+// turno se pide por WhatsApp sin guardar nada: horarios de la agenda y reserva local.
+import { AGENDA, CON_BACKEND } from '../../data/estudio';
 import type { Picks } from '../../data/test';
-import { desdeIso, mensajeConfirmacion } from '../mensajes';
 
 const API = (import.meta.env.PUBLIC_API_URL as string | undefined)?.replace(/\/$/, '');
-export const DEMO = !API;
 export const WHATSAPP_AUTO = import.meta.env.PUBLIC_WHATSAPP_AUTO === 'true';
 
 export interface Horario { hora: string; libre: boolean }
@@ -18,7 +16,7 @@ export class ErrorApi extends Error {
   }
 }
 
-async function pedir<T>(ruta: string, init?: RequestInit): Promise<T> {
+export async function pedir<T>(ruta: string, init?: RequestInit): Promise<T> {
   let r: Response;
   try {
     r = await fetch(`${API}/${ruta}`, { ...init, headers: { 'Content-Type': 'application/json', ...init?.headers } });
@@ -38,7 +36,9 @@ const desdeIsoLocal = (s: string) => {
 };
 
 /* ---------- Disponibilidad ---------- */
-function demoDisponibilidad(desde: string, hasta: string): Disponibilidad {
+// Sin backend: todos los horarios de la agenda, con el aviso mínimo y el horizonte. VioGua
+// confirma a mano, así que un horario pedido dos veces se resuelve al responder.
+function disponibilidadLocal(desde: string, hasta: string): Disponibilidad {
   const dias: Disponibilidad = {};
   const ahora = Date.now();
   const limite = new Date();
@@ -47,24 +47,20 @@ function demoDisponibilidad(desde: string, hasta: string): Disponibilidad {
     const base = AGENDA.horarios[d.getDay()] ?? [];
     if (!base.length || d > limite) continue;
     const horarios = base
-      .map((hora, i) => {
+      .filter(hora => {
         const [h, m] = hora.split(':').map(Number);
-        const inicio = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m).getTime();
-        // Ocupados de ejemplo, siempre los mismos para un mismo día.
-        const ocupado = (d.getDate() * 7 + i * 3 + d.getMonth()) % 5 === 0;
-        return { hora, libre: !ocupado, inicio };
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m).getTime() - ahora >= AGENDA.avisoMinHoras * 3600_000;
       })
-      .filter(h => h.inicio - ahora >= AGENDA.avisoMinHoras * 3600_000)
-      .map(({ hora, libre }) => ({ hora, libre }));
+      .map(hora => ({ hora, libre: true }));
     if (horarios.length) dias[iso(d)] = horarios;
   }
   return dias;
 }
 
 export async function disponibilidad(desde: string, hasta: string): Promise<Disponibilidad> {
-  if (DEMO) {
+  if (!CON_BACKEND) {
     await esperar(350);
-    return demoDisponibilidad(desde, hasta);
+    return disponibilidadLocal(desde, hasta);
   }
   const r = await pedir<{ dias: Disponibilidad }>(`disponibilidad?desde=${desde}&hasta=${hasta}`);
   return r.dias;
@@ -82,32 +78,29 @@ export interface PedidoReserva {
   consentimiento: boolean;
   web: string; // trampa para bots
 }
+export type EstadoTurno = 'pendiente' | 'confirmada' | 'cancelada';
 export interface Reserva {
+  /** Link del test y de la ficha del pedido. Sin backend no hay. */
   token: string | null;
+  /** Pendiente hasta que VioGua lo confirma; confirmada de entrada con Google Calendar. */
+  estado: EstadoTurno;
   inicio: string;
   meetUrl: string | null;
-  mensaje: string;
+  /** Confirmación que arma el backend. Por WhatsApp no hay: la pantalla arma el pedido. */
+  mensaje: string | null;
 }
 
-export async function reservar(p: PedidoReserva, testUrl: (token: string | null) => string): Promise<Reserva> {
-  if (DEMO) {
-    await esperar(900);
-    const mensaje = mensajeConfirmacion({
-      nombre: p.nombre,
-      fecha: desdeIso(p.fecha),
-      hora: p.hora,
-      ambientes: p.ambientes,
-      meetUrl: null,
-      testUrl: testUrl(null),
-    });
-    return { token: null, inicio: `${p.fecha}T${p.hora}`, meetUrl: null, mensaje };
+export async function reservar(p: PedidoReserva): Promise<Reserva> {
+  if (!CON_BACKEND) {
+    await esperar(600);
+    return { token: null, estado: 'pendiente', inicio: `${p.fecha}T${p.hora}`, meetUrl: null, mensaje: null };
   }
   return pedir<Reserva>('reservar', { method: 'POST', body: JSON.stringify(p) });
 }
 
 /* ---------- Después de reservar ---------- */
 export async function subirFotos(token: string, fotos: { blob: Blob; nombre: string; ambiente: string }[]) {
-  if (DEMO || !fotos.length) return;
+  if (!CON_BACKEND || !fotos.length) return;
   const datos = new FormData();
   datos.append('token', token);
   fotos.forEach((f, i) => {
@@ -118,21 +111,55 @@ export async function subirFotos(token: string, fotos: { blob: Blob; nombre: str
   if (!r.ok) throw new ErrorApi('No pudimos subir las fotos.', r.status);
 }
 
-export async function enviarTest(token: string, picks: Picks, imagen: Blob) {
-  if (DEMO) return;
+/** `resumen`: las elecciones con nombre, para que el estudio las lea en el panel o en el evento. */
+export async function enviarTest(token: string, picks: Picks, resumen: string, imagen: Blob) {
+  if (!CON_BACKEND) return;
   const datos = new FormData();
   datos.append('token', token);
   datos.append('picks', JSON.stringify(picks));
+  datos.append('resumen', resumen);
   datos.append('moodboard', imagen, 'moodboard.png');
   const r = await fetch(`${API}/enviar-test`, { method: 'POST', body: datos });
   if (!r.ok) throw new ErrorApi('No pudimos enviar tu test.', r.status);
 }
 
+export interface FotoAmbiente { ambiente: string; url: string }
 export interface MiTurno {
   nombre: string;
+  estado: EstadoTurno;
+  /** 'AAAA-MM-DDTHH:MM', hora de Argentina. */
   inicio: string;
+  cantidad: number;
   ambientes: string[];
   meetUrl: string | null;
   picks: Picks | null;
+  fotos: FotoAmbiente[];
+  /** Link firmado de la imagen del moodboard (vale un día). */
+  moodboard: string | null;
 }
 export const miTurno = (token: string) => pedir<MiTurno>(`mi-turno?t=${encodeURIComponent(token)}`);
+
+/* ---------- Panel del estudio (/estudio/) ---------- */
+export interface TurnoEstudio {
+  id: string;
+  token: string;
+  estado: EstadoTurno;
+  nombre: string;
+  email: string;
+  whatsapp: string;
+  cantidad: number;
+  ambientes: string[];
+  /** 'AAAA-MM-DDTHH:MM', hora de Argentina. */
+  inicio: string;
+  meetUrl: string | null;
+  creada: string;
+  fotos: FotoAmbiente[];
+  test: { picks: Picks; resumen: string | null; moodboard: string | null; actualizado: string } | null;
+}
+
+const conClave = (clave: string, init?: RequestInit): RequestInit => ({ ...init, headers: { 'x-clave': clave, ...init?.headers } });
+
+export const turnosEstudio = (clave: string) => pedir<{ quien: string; turnos: TurnoEstudio[] }>('estudio', conClave(clave));
+
+export const cambiarTurno = (clave: string, id: string, cambios: { estado?: EstadoTurno; meetUrl?: string }) =>
+  pedir<{ turno: TurnoEstudio }>('estudio', conClave(clave, { method: 'POST', body: JSON.stringify({ id, ...cambios }) }));

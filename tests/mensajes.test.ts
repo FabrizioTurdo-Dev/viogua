@@ -7,6 +7,8 @@ import {
   lista,
   mensajeAlEstudio,
   mensajeConfirmacion,
+  mensajeCancelacion,
+  mensajePedido,
   normalizarTelefono,
   telefonoLegible,
 } from '../src/scripts/mensajes';
@@ -101,6 +103,11 @@ describe('mensajeConfirmacion', () => {
   it('sin link de Meet avisa que llega por email', () => {
     expect(mensajeConfirmacion(base)).toContain('• Videollamada por Google Meet (el link te llega por email)');
   });
+  it('si ya hizo el test, no lo ofrece', () => {
+    const texto = mensajeConfirmacion({ ...base, testUrl: null });
+    expect(texto).not.toContain('test de estilo');
+    expect(texto).toContain('Living y Dormitorio principal.\n\n¿Necesitás cambiar el horario?');
+  });
   it('no menciona Zoom', () => {
     expect(mensajeConfirmacion(base)).not.toMatch(/zoom/i);
   });
@@ -108,5 +115,49 @@ describe('mensajeConfirmacion', () => {
     expect(mensajeAlEstudio(base)).toBe(
       '¡Hola! Soy Sofía. Acabo de agendar una reunión con VioGua para el martes 13 de octubre a las 15:00 hs.'
     );
+  });
+});
+
+describe('mensajePedido', () => {
+  const pedido = {
+    nombre: ' Sofía Pérez ',
+    email: 'sofia@gmail.com',
+    fecha: desdeIso('2026-10-13'),
+    hora: '15:00',
+    ambientes: ['Living', 'Cocina'],
+    total: '$400.000',
+    promo: false,
+  };
+  it('lleva todo lo que VioGua necesita para confirmar', () => {
+    expect(mensajePedido(pedido)).toBe(
+      [
+        '¡Hola, VioGua! Soy Sofía Pérez y quiero agendar una reunión por Google Meet.',
+        '',
+        '• Día: martes 13 de octubre',
+        '• Hora: 15:00 hs (hora de Argentina)',
+        '• Ambientes: Living y Cocina',
+        '• Total del diseño: $400.000',
+        '• Email para la invitación: sofia@gmail.com',
+        '',
+        '¿Me confirman el turno?',
+      ].join('\n')
+    );
+  });
+  it('marca la promo 4 + 1', () => {
+    expect(mensajePedido({ ...pedido, promo: true })).toContain('(promo 4 + 1)');
+  });
+  it('con backend suma el link de la ficha', () => {
+    const ficha = 'https://viogua.vercel.app/estudio/?t=abc';
+    expect(mensajePedido({ ...pedido, ficha })).toContain(`• Email para la invitación: sofia@gmail.com\n• Ficha del pedido: ${ficha}\n\n`);
+    expect(mensajePedido({ ...pedido, ficha: null })).not.toContain('Ficha');
+  });
+});
+
+describe('mensajeCancelacion', () => {
+  it('avisa el día y ofrece otro', () => {
+    const texto = mensajeCancelacion({ nombre: 'Sofía ', fecha: desdeIso('2026-10-13'), hora: '15:00', agendarUrl: 'https://viogua.vercel.app/test/' });
+    expect(texto).toMatch(/^¡Hola, Sofía! Te escribimos de VioGua\./);
+    expect(texto).toContain('la reunión del martes 13 de octubre a las 15:00 hs');
+    expect(texto).toContain('https://viogua.vercel.app/test/');
   });
 });

@@ -1,8 +1,8 @@
-/* Footer: bloque azul a todo el ancho, en ambos temas. */
+/* Footer: mismo fondo y tinta que la página, separado por un filete (no hay bloques invertidos). */
 .pie {
   margin-top: clamp(4rem, 9vw, 7.5rem);
   padding-block: clamp(3rem, 7vw, 5rem) 1.5rem;
-  background: var(--bloque);
+  border-top: 1px solid var(--linea);
   color: var(--tinta);
   font-size: var(--t-s);
 }
@@ -12,7 +12,7 @@
 /* Columnas */
 .pie-columnas { display: grid; gap: 2rem; grid-template-columns: 1fr; }
 @media (min-width: 40rem) { .pie-columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { .pie-columnas { grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)); gap: 2.5rem; } }
+@media (min-width: 64rem) { .pie-columnas { grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 2.5rem; } }
 .pie-marca { display: grid; gap: 1rem; align-content: start; }
 .pie-marca .marca { color: var(--tinta); }
 .pie-marca p { max-width: 22rem; color: var(--tinta); line-height: 1.55; }
@@ -22,7 +22,8 @@
 .pie-col li { min-height: 2rem; display: flex; align-items: center; }
 .pie-col a { padding-block: 0.3rem; text-decoration: none; }
 .pie-dato { display: inline-flex; align-items: center; gap: 0.55rem; }
-.pie-dato .icono { color: var(--acento-pie); }
+.pie-dato .icono { color: var(--cobalto); }
+.pie-email { overflow-wrap: anywhere; }
 
 /* Barra inferior */
 .pie-barra {
@@ -43,7 +44,7 @@
 /* Crédito del desarrollador */
 .pie-credito { margin-top: 1.25rem; font: 400 var(--t-xs) / 1.4 var(--f-tecnica); letter-spacing: 0.04em; }
 .pie-credito a { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--tinta); transition: color var(--dur-2) var(--ease); }
-.pie-credito .icono { color: var(--acento-pie); transition: transform var(--dur-3) var(--ease-resorte); }
+.pie-credito .icono { color: var(--cobalto); transition: transform var(--dur-3) var(--ease-resorte); }
 .pie-credito a:hover .icono { transform: rotate(-12deg) scale(1.15); }
-.pie-credito-nombre { background: linear-gradient(var(--acento-pie), var(--acento-pie)) no-repeat 0 100% / 0 1.5px; padding-bottom: 2px; transition: background-size var(--dur-3) var(--ease); }
+.pie-credito-nombre { background: linear-gradient(var(--cobalto), var(--cobalto)) no-repeat 0 100% / 0 1.5px; padding-bottom: 2px; transition: background-size var(--dur-3) var(--ease); }
 .pie-credito a:hover .pie-credito-nombre, .pie-credito a:focus-visible .pie-credito-nombre { background-size: 100% 1.5px; }

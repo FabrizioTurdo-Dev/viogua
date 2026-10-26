@@ -64,6 +64,18 @@ export const SENSACIONES: Sensacion[] = (
     ['encuentro', 'Encuentro', 'Una casa para recibir gente'],
     ['juego', 'Juego', 'Color, juego y creatividad'],
     ['nostalgia', 'Nostalgia', 'Objetos con historia'],
+    ['calidez', 'Calidez', 'Cálido como una tarde de otoño'],
+    ['frescura', 'Frescura', 'Aire fresco y liviano'],
+    ['amplitud', 'Amplitud', 'Espacio para respirar'],
+    ['intimidad', 'Intimidad', 'Rincones solo para mí'],
+    ['armonia', 'Armonía', 'Todo en equilibrio'],
+    ['alegria', 'Alegría', 'Que me saque una sonrisa'],
+    ['libertad', 'Libertad', 'Sin rigidez, a mi manera'],
+    ['simpleza', 'Simpleza', 'Menos es más'],
+    ['vacaciones', 'Vacaciones', 'Vacaciones todo el año'],
+    ['bienestar', 'Bienestar', 'Cuidarme y descansar de verdad'],
+    ['inspiracion', 'Inspiración', 'Un lugar que me inspire a crear'],
+    ['foco', 'Foco', 'Concentración para trabajar en casa'],
   ] as const
 ).map(([id, nombre, frase]) => ({ id, nombre, frase }));
 
@@ -82,6 +94,18 @@ export const MATERIALES: Material[] = (
     ['travertino', 'Travertino', 'engin akyurt', 'FszmlZln-4g'],
     ['laton', 'Latón', 'Erol Ahmed', 'XsQ8nUKpAO4'],
     ['azulejo', 'Azulejo esmaltado', 'Elena Giglia', 'DdrvtJ0lieY'],
+    ['espiga', 'Parquet espiga', 'DDP', 'kS1UuxzkuJE'],
+    ['veteado', 'Roble veteado', 'MeSSrro', 'Uo7M4171Hsg'],
+    ['ahumado', 'Roble ahumado', 'Marcel Strauß', 'E7DsoC0mcpw'],
+    ['hormigon', 'Hormigón visto', 'Wesley Tingey', '-Irs24DzLxM'],
+    ['revoque', 'Revoque rústico', 'Eugene Ngoya', '3Y_J_LfEZPc'],
+    ['calacatta', 'Mármol Calacatta', 'H&CO', 'tqu0IOMaiU8'],
+    ['marquina', 'Mármol Nero Marquina', 'Valeria Reverdo', 'dwy2meBFqW8'],
+    ['laja', 'Piedra laja', 'Mitchell Luo', 'i1O_Hr6cbWc'],
+    ['arenisca', 'Piedra arenisca', 'JKalina', 'Ibf--wj77FY'],
+    ['granito', 'Granito gris', 'Gareth David', 'Gi7Hw4o0gzc'],
+    ['ladrillo', 'Ladrillo visto', 'Mick Haupt', 'GN2IqNRlPXs'],
+    ['cuero', 'Cuero suela', 'Igor Karimov', 'PLI4fSGYQfg'],
   ] as const
 ).map(([id, nombre, autor, foto]) => ({ id, nombre, credito: { autor, url: `https://unsplash.com/photos/${foto}` } }));
 

@@ -1,7 +1,8 @@
 /* VioGua · "Cobalto sobre Yeso"
    Un plano de arquitecta en tinta cobalto sobre yeso, con muestras de materiales apoyadas encima.
-   Un azul, un rosa y blanco. El modo oscuro es el "modo azul" que pidió VioGua: todo en el #0066ff,
-   y lo que hay que resaltar va en yeso (el blanco del modo claro). */
+   Un azul, un rosa y blanco. Como en el concepto, cada modo es un fondo y una tinta, sin bloques
+   invertidos: en yeso (claro) la página es blanca con tinta azul; en cianotipo (el "modo azul" que pidió
+   VioGua) es toda #0066ff con tinta blanca. Botones y elecciones se rellenan con la tinta del modo. */
 
 /* Fraunces recortada por scripts/marca.mjs: SOFT fijo en 100, peso 300–900, opsz y WONK libres. */
 @font-face {
@@ -53,10 +54,8 @@
   --ease-resorte: linear(0, 0.36 8%, 0.86 20%, 1.06 31%, 1.08 39%, 1.02 53%, 0.99 67%, 1);
 }
 
-/* ---------- Modo claro: tinta cobalto sobre yeso ----------
-   También lo usan, en el modo azul, los bloques que en claro son azules (se resaltan en yeso). */
-:root,
-:root[data-theme='dark'] :is(.azul, .pie) {
+/* ---------- Yeso (modo claro): tinta cobalto sobre blanco ---------- */
+:root {
   --yeso: #ffffff; /* fondo */
   --papel: #ffffff; /* fichas y paneles */
   --tinta: #0066ff; /* texto */
@@ -92,16 +91,14 @@
   --luz: 0 0 0 0 transparent, 0 12px 44px -6px rgb(252 188 212 / 0.95);
 }
 :root {
-  --bloque: #0066ff; /* fondo de las secciones destacadas y del footer */
-  --acento-pie: #fcbcd4; /* íconos del footer: rosa sobre el footer azul, azul sobre el footer en yeso */
   color-scheme: light;
 }
 
-/* ---------- Modo azul (el "modo oscuro" que pidió VioGua) ----------
-   Un solo tono, el #0066ff. Lo que hay que resaltar (botones, elecciones, bloques, el texto destacado)
-   va en yeso. Lo fija un script en <head> según la preferencia guardada o la del sistema. */
+/* ---------- Cianotipo (el "modo azul" que pidió VioGua) ----------
+   Un solo tono, el #0066ff, con tinta blanca: el plano en negativo. Las tarjetas se dibujan con línea
+   y no hay bloques blancos; solo botones y elecciones se rellenan de blanco, como en el concepto.
+   Lo fija un script en <head> según la preferencia guardada o la del sistema. */
 :root[data-theme='dark'] {
-  --bloque: #ffffff;
   --yeso: #0066ff;
   --papel: #0066ff;
   --tinta: #ffffff;
@@ -113,8 +110,8 @@
   --sobre-boton: #0066ff;
   --acento: #ffffff;
   --sobre-acento: #0066ff;
-  --destacado: #ffffff;
-  --sobre-destacado: #0066ff;
+  --destacado: #fcbcd4; /* el rosa sigue siendo rosa: pastilla de promo y paso opcional */
+  --sobre-destacado: #002966;
   --burbuja: #0066ff;
   --sobre-burbuja: #ffffff;
   --enfasis: #ffffff; /* el texto destacado se marca entero en rosa, con letra blanca */
@@ -125,43 +122,14 @@
   --brillo: 0.3;
   --velo: rgb(0 40 120 / 0.75);
   --plano: rgb(255 255 255 / 0.1);
-  --az-a: #0066ff;
+  /* Azulejos en negativo: base azul, dibujo blanco y rosa. */
+  --az-a: #ffffff;
   --az-b: #fcbcd4;
-  --az-c: #ffffff;
-  --acento-pie: #0066ff;
+  --az-c: #0066ff;
   --elev-1: none;
   --elev-2: none;
   --elev-3: 0 30px 64px -22px rgb(0 40 120 / 0.6);
   --elev-muestra: 0 18px 40px -22px rgb(0 40 120 / 0.6);
   --luz: 0 12px 44px -6px rgb(255 255 255 / 0.55);
   color-scheme: dark;
-}
-
-/* ---------- Bloques sobre azul (modo claro) y pantalla del moodboard (siempre) ----------
-   El mismo sistema en negativo: texto blanco, detalles rosa. */
-:root:not([data-theme='dark']) :is(.azul, .pie),
-body:has(.resultado:not([hidden])) {
-  --yeso: #0066ff;
-  --papel: #0066ff;
-  --tinta: #ffffff;
-  --tinta-2: #ffffff;
-  --linea: rgb(255 255 255 / 0.4);
-  --cobalto: #ffffff;
-  --sobre-cobalto: #0066ff;
-  --boton: #ffffff;
-  --sobre-boton: #0066ff;
-  --acento: #ffffff;
-  --sobre-acento: #0066ff;
-  --enfasis: #0066ff;
-  --resaltador: #fcbcd4;
-  --resaltado-desde: 64%;
-  --resaltado-hasta: 90%;
-  --velo: rgb(0 40 120 / 0.75);
-  --plano: rgb(255 255 255 / 0.07);
-  --elev-1: none;
-  --elev-2: none;
-  --elev-muestra: 0 18px 40px -22px rgb(0 40 120 / 0.6);
-  --luz: 0 12px 44px -6px rgb(252 188 212 / 0.7);
-  --az-a: #0066ff;
-  --az-c: #ffffff;
 }

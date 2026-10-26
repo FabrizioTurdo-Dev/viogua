@@ -98,7 +98,6 @@ const temaActual = (): Tema => (raiz.dataset.theme === 'dark' ? 'dark' : 'light'
 function aplicar(tema: Tema) {
   raiz.dataset.theme = tema;
   metaColor?.setAttribute('content', tema === 'dark' ? '#0066ff' : '#ffffff');
-  botonTema?.setAttribute('aria-pressed', String(tema === 'dark'));
 }
 aplicar(temaActual());
 

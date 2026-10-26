@@ -8,7 +8,7 @@ export const GET: APIRoute = ({ site }) => {
     `- Instagram: [@${ESTUDIO.instagram}](${instagramUrl})`,
     whatsappUrl() && `- WhatsApp: ${whatsappUrl()}`,
     ESTUDIO.email && `- Email: ${ESTUDIO.email}`,
-    `- Reuniones: videollamada por ${AGENDA.plataforma}`,
+    `- Reuniones: videollamada por ${AGENDA.plataforma} (${AGENDA.resumen})`,
   ].filter(Boolean);
 
   const texto = [

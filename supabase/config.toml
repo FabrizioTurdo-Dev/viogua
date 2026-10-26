@@ -1,0 +1,22 @@
+# Proyecto de Supabase de VioGua (ref aqerfgqnvpwkmcynlcjj). Solo lo que cambia de los valores
+# por defecto: las funciones son públicas (sin JWT); se protegen con CORS, validación y tokens, y el
+# panel del estudio, además, con su clave.
+project_id = "viogua"
+
+[functions.disponibilidad]
+verify_jwt = false
+
+[functions.reservar]
+verify_jwt = false
+
+[functions.subir-fotos]
+verify_jwt = false
+
+[functions.enviar-test]
+verify_jwt = false
+
+[functions.mi-turno]
+verify_jwt = false
+
+[functions.estudio]
+verify_jwt = false

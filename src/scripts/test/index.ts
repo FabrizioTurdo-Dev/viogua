@@ -1,6 +1,6 @@
 // Flujo completo: turno (cantidad → ambientes → reunión → confirmación) y test de estilo
 // (intro → estilos → colores → sensaciones → materiales → carga → moodboard).
-import { ESTUDIO, whatsappUrl } from '../../data/estudio';
+import { CON_BACKEND, ESTUDIO, HONORARIOS, POR_AMBIENTE, POR_WHATSAPP, desglose, pesos, precio, whatsappUrl } from '../../data/estudio';
 import { COLLAGE_ALTO, FRASES_CARGA, TIPOS, TITULOS, buscar, celdasDe, esColor, esFoto, esSensacion, piezasDe, type Picks, type Tipo } from '../../data/test';
 import {
   desdeIso,
@@ -9,11 +9,12 @@ import {
   fechaTitulo,
   mensajeAlEstudio,
   mensajeConfirmacion,
+  mensajePedido,
   normalizarTelefono,
   telefonoLegible,
 } from '../mensajes';
 import { $, $$, avisar, guardado, reducido } from '../ui';
-import { DEMO, ErrorApi, WHATSAPP_AUTO, disponibilidad, enviarTest, iso, miTurno, reservar, subirFotos, type Disponibilidad } from './api';
+import { ErrorApi, WHATSAPP_AUTO, disponibilidad, enviarTest, iso, miTurno, reservar, subirFotos, type Disponibilidad } from './api';
 import { historia } from './historia';
 
 const datos = JSON.parse($('#datos-test').textContent || '{}') as {
@@ -65,9 +66,19 @@ let estado: Estado = (() => {
 const guardar = () => guardado.escribir(CLAVE, JSON.stringify(estado));
 const fotos: ({ blob: Blob; url: string; nombre: string } | undefined)[] = []; // solo en memoria
 
-/** El test se habilita con el turno confirmado (con backend, con el token de la reserva). */
-const habilitado = () => (DEMO ? estado.confirmada : Boolean(estado.token));
+/** Borra el turno y el test para empezar otro; puede conservar los datos de contacto. */
+function borrarTurno(cliente = nuevo().cliente) {
+  estado = { ...nuevo(), cliente };
+  fotos.forEach(f => f && URL.revokeObjectURL(f.url));
+  fotos.length = 0;
+  guardar();
+}
+
+/** El test se habilita con el turno pedido (con backend, con el token de la reserva). */
+const habilitado = () => (CON_BACKEND ? Boolean(estado.token) : estado.confirmada);
 const testUrl = (token: string | null) => `${datos.sitio}test/${token ? `?t=${encodeURIComponent(token)}` : ''}`;
+/** Ficha del pedido para el estudio: datos, fotos y test (con backend). */
+const fichaUrl = (token: string | null) => (token ? `${datos.sitio}estudio/?t=${encodeURIComponent(token)}` : null);
 
 /* ---------- Navegación entre pasos ---------- */
 const secciones = $$<HTMLElement>('.paso-test');
@@ -158,10 +169,7 @@ botonReiniciar.addEventListener('click', () => {
   clearTimeout(reiniciarTiempo);
   delete botonReiniciar.dataset.armado;
   botonReiniciar.textContent = 'Empezar de nuevo';
-  estado = nuevo();
-  fotos.forEach(f => f && URL.revokeObjectURL(f.url));
-  fotos.length = 0;
-  guardar();
+  borrarTurno();
   ir('cantidad');
 });
 
@@ -171,14 +179,25 @@ function ajustarAmbientes() {
   const n = estado.cantidad === 4 ? 5 : estado.cantidad ?? 0;
   estado.ambientes = Array.from({ length: n }, (_, i) => estado.ambientes[i] || '');
 }
+function pintarDesglose() {
+  const lista = $('#desglose');
+  const n = estado.cantidad;
+  lista.hidden = !n;
+  if (!n) return;
+  lista.innerHTML =
+    desglose(n).map(r => `<div class="desglose-fila"><dt>${r.concepto}<span>${r.detalle}</span></dt><dd>${pesos(r.monto)}</dd></div>`).join('') +
+    `<div class="desglose-fila desglose-total"><dt>Total</dt><dd>${precio(n)}</dd></div>`;
+}
 radios.forEach(r => r.addEventListener('change', () => {
   estado.cantidad = Number(r.value);
   ajustarAmbientes();
   guardar();
+  pintarDesglose();
   $('#error-cantidad').textContent = '';
 }));
 preparar.cantidad = () => {
   radios.forEach(r => { r.checked = Number(r.value) === estado.cantidad; });
+  pintarDesglose();
 };
 $('#cantidad-siguiente').addEventListener('click', () => {
   if (!estado.cantidad) {
@@ -201,6 +220,55 @@ async function achicar(archivo: File): Promise<Blob> {
   lienzo.height = Math.round(bitmap.height * k);
   lienzo.getContext('2d')!.drawImage(bitmap, 0, 0, lienzo.width, lienzo.height);
   return new Promise((ok, mal) => lienzo.toBlob(b => (b ? ok(b) : mal(new Error('sin imagen'))), 'image/jpeg', 0.85));
+}
+
+// Foto opcional de un ambiente (solo con backend: por WhatsApp las mandan en el chat).
+function prepararFoto(zona: HTMLElement, i: number) {
+  const archivo = $<HTMLInputElement>('input[type="file"]', zona);
+  archivo.id = `foto-${i}`;
+  $<HTMLLabelElement>('.foto-boton', zona).htmlFor = archivo.id;
+  const vista = $<HTMLImageElement>('.foto-vista', zona);
+  const rotulo = $('.foto-boton span', zona);
+  const ayuda = $('.foto-ayuda', zona);
+  const quitar = $<HTMLButtonElement>('.foto-quitar', zona);
+  const mostrarFoto = () => {
+    const f = fotos[i];
+    vista.hidden = !f;
+    quitar.hidden = !f;
+    ayuda.hidden = Boolean(f);
+    rotulo.textContent = f ? 'Cambiar foto' : 'Agregar foto';
+    if (f) {
+      vista.src = f.url;
+      vista.alt = `Foto de ${estado.ambientes[i] || `ambiente ${i + 1}`}`;
+    }
+  };
+  const usar = async (f: File | undefined) => {
+    if (!f) return;
+    if (!f.type.startsWith('image/')) return avisar('Ese archivo no es una imagen.');
+    try {
+      const blob = await achicar(f);
+      if (fotos[i]) URL.revokeObjectURL(fotos[i]!.url);
+      fotos[i] = { blob, url: URL.createObjectURL(blob), nombre: f.name };
+      mostrarFoto();
+    } catch {
+      avisar('No pudimos leer esa foto. Probá con otra.');
+    }
+  };
+  archivo.addEventListener('change', () => usar(archivo.files?.[0]));
+  quitar.addEventListener('click', () => {
+    if (fotos[i]) URL.revokeObjectURL(fotos[i]!.url);
+    fotos[i] = undefined;
+    archivo.value = '';
+    mostrarFoto();
+  });
+  zona.addEventListener('dragover', e => { e.preventDefault(); zona.setAttribute('data-encima', ''); });
+  zona.addEventListener('dragleave', () => zona.removeAttribute('data-encima'));
+  zona.addEventListener('drop', e => {
+    e.preventDefault();
+    zona.removeAttribute('data-encima');
+    usar(e.dataTransfer?.files[0]);
+  });
+  mostrarFoto();
 }
 
 preparar.ambientes = () => {
@@ -241,51 +309,7 @@ preparar.ambientes = () => {
     });
 
     const zona = $('.foto', caja);
-    const archivo = $<HTMLInputElement>('input[type="file"]', zona);
-    archivo.id = `foto-${i}`;
-    $<HTMLLabelElement>('.foto-boton', zona).htmlFor = archivo.id;
-    const vista = $<HTMLImageElement>('.foto-vista', zona);
-    const rotulo = $('.foto-boton span', zona);
-    const ayuda = $('.foto-ayuda', zona);
-    const quitar = $<HTMLButtonElement>('.foto-quitar', zona);
-    const mostrarFoto = () => {
-      const f = fotos[i];
-      vista.hidden = !f;
-      quitar.hidden = !f;
-      ayuda.hidden = Boolean(f);
-      rotulo.textContent = f ? 'Cambiar foto' : 'Agregar foto';
-      if (f) {
-        vista.src = f.url;
-        vista.alt = `Foto de ${estado.ambientes[i] || `ambiente ${i + 1}`}`;
-      }
-    };
-    const usar = async (f: File | undefined) => {
-      if (!f) return;
-      if (!f.type.startsWith('image/')) return avisar('Ese archivo no es una imagen.');
-      try {
-        const blob = await achicar(f);
-        if (fotos[i]) URL.revokeObjectURL(fotos[i]!.url);
-        fotos[i] = { blob, url: URL.createObjectURL(blob), nombre: f.name };
-        mostrarFoto();
-      } catch {
-        avisar('No pudimos leer esa foto. Probá con otra.');
-      }
-    };
-    archivo.addEventListener('change', () => usar(archivo.files?.[0]));
-    quitar.addEventListener('click', () => {
-      if (fotos[i]) URL.revokeObjectURL(fotos[i]!.url);
-      fotos[i] = undefined;
-      archivo.value = '';
-      mostrarFoto();
-    });
-    zona.addEventListener('dragover', e => { e.preventDefault(); zona.setAttribute('data-encima', ''); });
-    zona.addEventListener('dragleave', () => zona.removeAttribute('data-encima'));
-    zona.addEventListener('drop', e => {
-      e.preventDefault();
-      zona.removeAttribute('data-encima');
-      usar(e.dataTransfer?.files[0]);
-    });
-    mostrarFoto();
+    if (zona) prepararFoto(zona, i);
     lista.appendChild(caja);
   });
 };
@@ -489,22 +513,19 @@ $<HTMLFormElement>('#form-reunion').addEventListener('submit', async e => {
   error.textContent = '';
   const textoBoton = botonConfirmar.textContent;
   botonConfirmar.setAttribute('data-ocupado', '');
-  botonConfirmar.textContent = 'Confirmando…';
+  botonConfirmar.textContent = POR_WHATSAPP ? 'Preparando tu pedido…' : 'Confirmando…';
   try {
-    const r = await reservar(
-      {
-        nombre: estado.cliente.nombre,
-        email: estado.cliente.email,
-        whatsapp: normalizarTelefono(estado.cliente.tel)!,
-        cantidad: estado.cantidad!,
-        ambientes: estado.ambientes,
-        fecha: estado.reunion.fecha,
-        hora: estado.reunion.hora,
-        consentimiento: estado.cliente.consentimiento,
-        web: campos.web.value,
-      },
-      testUrl
-    );
+    const r = await reservar({
+      nombre: estado.cliente.nombre,
+      email: estado.cliente.email,
+      whatsapp: normalizarTelefono(estado.cliente.tel)!,
+      cantidad: estado.cantidad!,
+      ambientes: estado.ambientes,
+      fecha: estado.reunion.fecha,
+      hora: estado.reunion.hora,
+      consentimiento: estado.cliente.consentimiento,
+      web: campos.web.value,
+    });
     Object.assign(estado, { confirmada: true, token: r.token, mensaje: r.mensaje, meetUrl: r.meetUrl });
     guardar();
     if (r.token) {
@@ -535,21 +556,42 @@ preparar.confirmada = () => {
   const lista = $('#turno-ambientes');
   lista.textContent = '';
   estado.ambientes.forEach(a => { const li = document.createElement('li'); li.textContent = a; lista.appendChild(li); });
+  const n = estado.cantidad;
+  $('#turno-total').textContent = n ? `Total del diseño: ${precio(n)}` : '';
+  $('#turno-desglose').textContent = n
+    ? `${n} × ${pesos(POR_AMBIENTE)} (render y presupuesto) + ${pesos(HONORARIOS.acompanamiento)} de acompañamiento${n === 4 ? ' · el quinto, de regalo' : ''}`
+    : '';
 
-  const mensaje = estado.mensaje ?? mensajeConfirmacion({
+  const confirmar = $<HTMLAnchorElement>('#wa-confirmar');
+  if (POR_WHATSAPP) {
+    // El pedido se arma de nuevo cada vez: es lo que la persona le manda al estudio.
+    const pedido = mensajePedido({
+      nombre: estado.cliente.nombre, email: estado.cliente.email, fecha, hora: estado.reunion.hora, ambientes: estado.ambientes,
+      total: n ? precio(n) : '', promo: n === 4, ficha: fichaUrl(estado.token),
+    });
+    $('#wa-mensaje').textContent = pedido;
+    $('#wa-estado').textContent = 'Tu mensaje, listo para enviar';
+    const alEstudio = whatsappUrl(pedido);
+    confirmar.hidden = !alEstudio;
+    if (alEstudio) confirmar.href = alEstudio;
+    $('#confirmacion-email').textContent = `Cuando te confirmemos el turno, la invitación con el link de Google Meet te llega a ${estado.cliente.email}.`;
+    return;
+  }
+
+  $('#wa-mensaje').textContent = estado.mensaje ?? mensajeConfirmacion({
     nombre: estado.cliente.nombre, fecha, hora: estado.reunion.hora, ambientes: estado.ambientes, meetUrl: estado.meetUrl, testUrl: testUrl(estado.token),
   });
-  $('#wa-mensaje').textContent = mensaje;
   const tel = normalizarTelefono(estado.cliente.tel);
   $('#wa-estado').textContent = WHATSAPP_AUTO && tel ? `Te enviamos este mensaje por WhatsApp al ${telefonoLegible(tel)}` : 'Así queda tu confirmación';
   const alEstudio = whatsappUrl(mensajeAlEstudio({ nombre: estado.cliente.nombre, fecha, hora: estado.reunion.hora }));
-  const confirmar = $<HTMLAnchorElement>('#wa-confirmar');
   confirmar.hidden = WHATSAPP_AUTO || !alEstudio;
   if (alEstudio) confirmar.href = alEstudio;
-  $('#confirmacion-email').textContent = DEMO
-    ? `Modo demo: no se envía nada. Con la agenda conectada, la invitación con el link de Google Meet llega a ${estado.cliente.email}.`
-    : `Te mandamos la invitación con el link de Google Meet a ${estado.cliente.email}. Si no la ves, revisá el correo no deseado.`;
+  $('#confirmacion-email').textContent = `Te mandamos la invitación con el link de Google Meet a ${estado.cliente.email}. Si no la ves, revisá el correo no deseado.`;
 };
+$('#otro-turno').addEventListener('click', () => {
+  borrarTurno(estado.cliente);
+  ir('cantidad');
+});
 
 /* ---------- Test: grillas de selección ---------- */
 function pintarSeleccion(tipo: Tipo) {
@@ -713,11 +755,14 @@ preparar.resultado = () => {
   // Con backend: el estudio recibe las elecciones y la imagen antes de la reunión (una sola vez).
   if (estado.token && !estado.testEnviado) {
     historia(estado.picks, datos.fotos)
-      .then(png => enviarTest(estado.token!, estado.picks, png))
+      .then(png => enviarTest(estado.token!, estado.picks, resumenPicks(), png))
       .then(() => { estado.testEnviado = true; guardar(); })
       .catch(() => { /* se reintenta la próxima vez que vea el resultado */ });
   }
 };
+
+const resumenPicks = () =>
+  TIPOS.map(t => `${TITULOS[t]}: ${estado.picks[t].map(id => buscar(t, id)?.nombre ?? id).join(', ')}`).join('\n');
 
 $('#repetir-test').addEventListener('click', () => {
   estado.picks = { estilos: [], colores: [], sensaciones: [], materiales: [] };
@@ -780,14 +825,17 @@ if (prueba && navigator.canShare?.({ files: [prueba] })) {
 
 /* ---------- Entrada ---------- */
 (async () => {
+  // Una reunión que ya pasó no traba el turno: se agenda otra con los mismos datos de contacto.
+  const pasada = estado.confirmada && estado.reunion && new Date(`${estado.reunion.fecha}T12:00:00`) < hoy;
+  if (pasada) borrarTurno(estado.cliente);
   const params = new URLSearchParams(location.search);
   const token = params.get('t');
   // Retomar el test desde otro dispositivo con el link del mensaje (con backend).
-  if (token && !DEMO && token !== estado.token) {
+  if (token && CON_BACKEND && token !== estado.token) {
     try {
       const t = await miTurno(token);
       const [fecha, hora] = t.inicio.slice(0, 16).split('T');
-      estado = { ...nuevo(), paso: 'intro', confirmada: true, token, meetUrl: t.meetUrl, ambientes: t.ambientes, reunion: { fecha, hora },
+      estado = { ...nuevo(), paso: 'intro', confirmada: true, token, meetUrl: t.meetUrl, cantidad: t.cantidad, ambientes: t.ambientes, reunion: { fecha, hora },
         cliente: { ...nuevo().cliente, nombre: t.nombre }, picks: t.picks ?? nuevo().picks, testEnviado: Boolean(t.picks) };
       guardar();
     } catch {
@@ -805,5 +853,6 @@ if (prueba && navigator.canShare?.({ files: [prueba] })) {
   if (paso === 'carga') paso = completos() ? 'resultado' : 'materiales';
   const retoma = guardadoPrevio && paso !== 'cantidad' && paso !== 'resultado' && !token;
   ir(paso, { foco: false });
-  if (retoma) avisar('Retomaste donde lo dejaste.');
+  if (pasada) avisar('Tu reunión anterior ya pasó. Podés agendar otra.');
+  else if (retoma) avisar('Retomaste donde lo dejaste.');
 })();

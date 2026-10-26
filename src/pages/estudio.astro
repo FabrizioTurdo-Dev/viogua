@@ -1,0 +1,120 @@
+---
+// Panel del estudio, fuera de buscadores. Con la clave de VioGua: los turnos pedidos desde el sitio,
+// para agendarlos en Google Calendar, confirmarlos, avisar por WhatsApp o cancelarlos. Sin la
+// clave y con ?t=<token> (el link que le llega al estudio en el WhatsApp del pedido): la ficha de
+// ese pedido, con sus fotos y su test.
+import '../styles/estudio.css';
+import Base from '../layouts/Base.astro';
+import Icono from '../components/marca/Icono.astro';
+import { CON_BACKEND, ESTUDIO } from '../data/estudio';
+
+const datos = { sitio: Astro.site!.href };
+---
+
+<Base
+  titulo={`Panel del estudio · ${ESTUDIO.nombre}`}
+  descripcion={`Turnos pedidos desde el sitio de ${ESTUDIO.nombre}.`}
+  noindex
+  clase="pagina-estudio"
+>
+  <script type="application/json" id="datos-estudio" set:html={JSON.stringify(datos)} />
+
+  <div class="estudio envoltura" data-backend={CON_BACKEND ? '' : undefined}>
+    <header class="estudio-cabeza">
+      <p class="etiqueta" id="estudio-etiqueta">Panel del estudio</p>
+      <h1 id="estudio-titulo" tabindex="-1">Turnos</h1>
+      <p class="estudio-bajada" id="estudio-bajada"></p>
+    </header>
+
+    {
+      !CON_BACKEND && (
+        <p class="estudio-aviso">
+          El panel necesita el backend: cargá <code>PUBLIC_API_URL</code> en <code>.env</code> (y en Vercel) con la URL de
+          las funciones de Supabase.
+        </p>
+      )
+    }
+
+    <form class="estudio-entrar" id="estudio-entrar" novalidate hidden>
+      <div class="campo-grupo">
+        <label for="estudio-clave">Clave del estudio</label>
+        <input class="campo" id="estudio-clave" type="password" autocomplete="current-password" spellcheck="false" aria-describedby="ayuda-clave error-entrar" />
+        <p class="campo-ayuda" id="ayuda-clave">Queda guardada en este dispositivo hasta que toques «Salir».</p>
+      </div>
+      <button class="boton" type="submit">Entrar</button>
+      <p class="error" id="error-entrar" role="alert"></p>
+    </form>
+
+    <div class="estudio-barra" id="estudio-barra" hidden>
+      <div class="filtros" role="group" aria-label="Qué turnos ver">
+        <button class="filtro" type="button" data-filtro="pendientes" aria-pressed="true">Por confirmar <span></span></button>
+        <button class="filtro" type="button" data-filtro="confirmados" aria-pressed="false">Confirmados <span></span></button>
+        <button class="filtro" type="button" data-filtro="anteriores" aria-pressed="false">Anteriores <span></span></button>
+        <button class="filtro" type="button" data-filtro="cancelados" aria-pressed="false">Cancelados <span></span></button>
+      </div>
+      <div class="estudio-herramientas">
+        <button class="enlace" type="button" id="estudio-actualizar">Actualizar</button>
+        <button class="enlace" type="button" id="estudio-salir">Salir</button>
+      </div>
+    </div>
+
+    <p class="estudio-estado" id="estudio-estado" role="status"></p>
+    <div class="tarjetas" id="tarjetas"></div>
+    <button class="enlace estudio-soy" type="button" id="estudio-soy" hidden>¿Sos de VioGua? Entrá con la clave</button>
+  </div>
+
+  <template id="plantilla-tarjeta">
+    <article class="tarjeta">
+      <header class="tarjeta-cabeza">
+        <div class="tarjeta-cuando">
+          <p class="tarjeta-dia"></p>
+          <p class="tarjeta-hora"></p>
+        </div>
+        <span class="estado"></span>
+      </header>
+      <h2 class="tarjeta-nombre"></h2>
+      <ul class="tarjeta-datos">
+        <li data-dato="whatsapp"><Icono nombre="mensaje" /><a target="_blank" rel="noopener"></a></li>
+        <li data-dato="email"><Icono nombre="email" /><a></a></li>
+        <li data-dato="meet"><Icono nombre="video" /><a target="_blank" rel="noopener"></a></li>
+      </ul>
+      <div class="tarjeta-pedido">
+        <ul class="tarjeta-ambientes"></ul>
+        <p class="tarjeta-total"></p>
+      </div>
+      <div class="tarjeta-bloque" data-bloque="fotos">
+        <p class="etiqueta">Fotos de los ambientes</p>
+        <div class="tarjeta-fotos"></div>
+      </div>
+      <div class="tarjeta-bloque" data-bloque="test">
+        <p class="etiqueta">Test de estilo</p>
+        <div class="tarjeta-test">
+          <a class="tarjeta-moodboard" target="_blank" rel="noopener"><img alt="Moodboard del test" loading="lazy" /></a>
+          <dl class="tarjeta-picks"></dl>
+        </div>
+      </div>
+      <div class="tarjeta-acciones" data-bloque="acciones">
+        <div class="campo-grupo tarjeta-meet">
+          <label>Link de Google Meet</label>
+          <input class="campo" type="url" inputmode="url" spellcheck="false" placeholder="https://meet.google.com/abc-defg-hij" />
+        </div>
+        <div class="tarjeta-botones">
+          <a class="boton boton--chico boton--linea" data-accion="calendario" target="_blank" rel="noopener"><Icono nombre="calendario" />Agendar en Google Calendar</a>
+          <button class="boton boton--chico" type="button" data-accion="confirmar"><Icono nombre="ok" />Confirmar turno</button>
+          <button class="boton boton--chico boton--linea" type="button" data-accion="guardar">Guardar link</button>
+          <a class="boton boton--chico" data-accion="avisar" target="_blank" rel="noopener"><Icono nombre="mensaje" /><span>Avisar por WhatsApp</span></a>
+        </div>
+        <div class="tarjeta-secundarias">
+          <button class="enlace" type="button" data-accion="cancelar">Cancelar turno</button>
+          <button class="enlace" type="button" data-accion="reactivar">Volver a «por confirmar»</button>
+        </div>
+        <p class="error" role="alert"></p>
+      </div>
+      <p class="tarjeta-pie"></p>
+    </article>
+  </template>
+
+  <script>
+    import '../scripts/estudio';
+  </script>
+</Base>

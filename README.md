@@ -4,6 +4,7 @@ Sitio de **VioGua**, estudio de diseño de interiores: portada, turno por videol
 
 - **Portada** (`/`): hero, pilares, proceso, test de moodboard (el arco como puerta), promo 4 + 1, sobre VioGua, preguntas frecuentes y footer con navegación y reuniones.
 - **Turno y test** (`/test/`): cantidad de ambientes → nombres y fotos → día, horario y datos → confirmación → test de 4 pasos → moodboard (collage en pantalla e imagen 1080 × 1920 para historias).
+- **Panel del estudio** (`/estudio/`, fuera de buscadores): con la clave de VioGua, los turnos pedidos para agendarlos, confirmarlos, avisar por WhatsApp o cancelarlos; con `?t=…`, la ficha de un pedido (datos, fotos y test).
 - **Privacidad** (`/privacidad/`), **404**, **guía de estilo** (`/estilo/`, fuera de buscadores), `robots.txt`, `llms.txt` y `sitemap-index.xml`.
 
 ## Stack
@@ -37,7 +38,7 @@ Requiere Node 22.12 o más nuevo.
 
 | Qué | Archivo |
 |---|---|
-| Contacto, agenda de ejemplo, promo, pilares, proceso, servicios, preguntas frecuentes, crédito | `src/data/estudio.ts` |
+| Contacto, agenda, precios, promo, pilares, proceso, servicios, preguntas frecuentes, crédito | `src/data/estudio.ts` |
 | Estilos, colores, sensaciones, materiales, frases de carga y forma del collage | `src/data/test.ts` |
 | Fotos de estilos y materiales | `src/assets/estilos/`, `src/assets/materiales/` |
 | Texto de confirmación del turno | `src/scripts/mensajes.ts` (`mensajeConfirmacion`) |
@@ -59,8 +60,9 @@ Copiar `.env.example` a `.env`.
 
 | Variable | Para qué |
 |---|---|
-| `SITE_URL` | Dominio público (sitemap, canonical, Open Graph). Por defecto `https://viogua.vercel.app`. |
-| `PUBLIC_API_URL` | URL de las Edge Functions de Supabase. **Vacía = modo demo**: horarios de ejemplo y confirmación local, sin guardar ni enviar nada. |
+| `SITE_URL` | Dominio público (sitemap, canonical, Open Graph). Por defecto `https://vioguamvp.vercel.app` (el proyecto «vioguamvp» de Vercel). |
+| `PUBLIC_API_URL` | URL de las Edge Functions de Supabase (`https://aqerfgqnvpwkmcynlcjj.supabase.co/functions/v1`). Con valor, el pedido se guarda, el horario queda tomado, se suben fotos y test, y VioGua gestiona los turnos en `/estudio/`. **Vacía**: el turno se pide por WhatsApp y el sitio no guarda nada. |
+| `PUBLIC_GOOGLE_CALENDAR` | `true` cuando Google Calendar esté conectado en Supabase: el turno se confirma solo, con evento y link de Meet. Mientras tanto (`false`), la persona le manda el pedido por WhatsApp y VioGua lo confirma a mano. |
 | `PUBLIC_WHATSAPP_AUTO` | `true` cuando el envío por WhatsApp Cloud API esté aprobado. Mientras tanto, la confirmación ofrece «Confirmá por WhatsApp» al número del estudio. |
 
 ## SEO y GEO
@@ -74,22 +76,56 @@ Copiar `.env.example` a `.env`.
 ## Deploy (Vercel)
 
 1. Importar el repositorio `github.com/FabrizioTurdo-Dev/viogua` en Vercel (detecta Astro solo).
-2. Cargar las variables de entorno (en modo demo alcanza con `SITE_URL`).
+2. Cargar las variables de entorno (con los turnos por WhatsApp alcanza con `SITE_URL`).
 3. Cada rama genera un preview; `main` publica producción.
 
-## Próximas fases (backend)
+## Backend (Supabase)
 
-Se hacen cuando estén las cuentas y credenciales:
+Proyecto propio de VioGua, separado de los demás: **`viogua`**, ref `aqerfgqnvpwkmcynlcjj`. El MCP de Supabase está en `../.mcp.json` (raíz de la carpeta VioGua).
 
-1. **Supabase** (proyecto nuevo, región sa-east-1): tablas `reservas`, `tests`, `bloqueos`, `avisos` con RLS; buckets privados `ambientes` y `moodboards`; funciones `disponibilidad`, `reservar`, `subir-fotos`, `enviar-test` y `mi-turno` (`Deno.serve`, CORS por dominio, validación del lado servidor). El front ya llama a esas rutas desde `src/scripts/test/api.ts`.
-2. **Google Calendar + Meet**: OAuth con refresh token de la cuenta de VioGua (app publicada en producción), calendario «VioGua · Turnos», evento con link de Meet e invitación al email del cliente.
-3. **WhatsApp Cloud API**: plantilla `viogua_turno_confirmado` (utility), envío desde la función `reservar` y `PUBLIC_WHATSAPP_AUTO=true`.
+| Pieza | Dónde |
+|---|---|
+| Tablas `reservas`, `tests`, `fotos`, `accesos` (RLS sin políticas: solo las funciones) y buckets privados `ambientes`, `moodboards` | `supabase/migrations/20261026000000_turnos.sql` |
+| Funciones del sitio `disponibilidad`, `reservar`, `subir-fotos`, `enviar-test`, `mi-turno` y del panel `estudio` (públicas, sin JWT) | `supabase/functions/*/index.ts` |
+| Agenda (la misma de `estudio.ts`; un test lo verifica), validación, CORS, acceso al panel, Google Calendar | `supabase/functions/_shared/` |
+
+**Cómo funciona sin Google Calendar** (hoy):
+
+1. La persona elige ambientes (con fotos), día y horario. `reservar` guarda el turno como **pendiente**: el horario deja de ofrecerse en el sitio.
+2. La pantalla le arma el pedido para mandarle a VioGua por WhatsApp, con el link a la **ficha del pedido** (`/estudio/?t=…`: datos, fotos y, cuando lo haga, el test con su moodboard).
+3. VioGua abre la ficha (en su dispositivo, con la clave, se abre el panel en ese turno) y:
+   - **Agendar en Google Calendar**: abre el evento ya armado (día, hora, cliente como invitado, datos y ficha). Le suma Meet y lo guarda: Google le manda la invitación al cliente.
+   - Pega el link de Meet y toca **Confirmar turno**.
+   - **Avisar por WhatsApp**: abre el chat con el cliente con la confirmación escrita (día, hora, Meet y link del test).
+   - **Cancelar turno** libera el horario y ofrece el aviso de cancelación.
+
+Un horario, una reserva: índice único sobre `inicio` de los turnos no cancelados. Si dos personas piden el mismo turno a la vez, la segunda recibe 409.
+
+**Acceso al panel**: cada clave se guarda solo como SHA-256 en la tabla `accesos` (`nombre`, `clave_sha256`). Para dar una clave nueva, generar una al azar (32 caracteres o más), insertar su hash y pasar el link `https://<dominio>/estudio/#clave=<clave>`: el panel la guarda en ese dispositivo y la saca de la barra. Para quitar un acceso, borrar su fila.
+
+Publicar (con el MCP autenticado, o con la CLI logueada en la cuenta de VioGua y `supabase link --project-ref aqerfgqnvpwkmcynlcjj`):
+
+1. Confirmar que el ref corresponde al proyecto `viogua`.
+2. Aplicar la migración y desplegar las seis funciones con `verify_jwt = false` (`supabase/config.toml`).
+3. Secreto `ORIGENES` cuando haya dominio propio: dominios del sitio separados por coma (ej.: `https://viogua.com.ar,https://vioguamvp.vercel.app`). Por defecto acepta `http://localhost:5184` y `https://vioguamvp.vercel.app`.
+4. En Vercel y en `.env`: `PUBLIC_API_URL=https://aqerfgqnvpwkmcynlcjj.supabase.co/functions/v1`.
+
+**Estado (26/10/2026)**: pasos 1 y 2 hechos con el MCP (migración `turnos`, seis funciones activas, probadas de punta a punta). Accesos `guada` y `fabrizio` cargados; las claves están en `../claves-panel-estudio.txt`, fuera del repo. Falta el paso 4.
+
+Al desplegar con el MCP, cada función se sube con su `index.ts` y los `_shared/*.ts` que usa, con la misma estructura de carpetas (entrypoint `<función>/index.ts`) para que los imports `../_shared/…` resuelvan.
+
+Chequear las funciones sin publicarlas: `npx deno@2 check --no-lock --node-modules-dir=none supabase/functions/*/index.ts`.
+
+## Próximas fases
+
+1. **Google Calendar + Meet**: OAuth con refresh token de la cuenta de VioGua (app publicada en producción), calendario «VioGua · Turnos». Secretos en Supabase: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, `GOOGLE_CALENDAR_ID` y, si hace falta, `GOOGLE_CALENDARIOS_OCUPADOS` (por defecto `primary`). Con eso, `PUBLIC_GOOGLE_CALENDAR=true`: `reservar` confirma el turno sola, crea el evento con Meet y la disponibilidad descuenta lo ocupado en la agenda de Guada.
+2. **WhatsApp Cloud API**: plantilla `viogua_turno_confirmado` (utility), envío desde la función `reservar` y `PUBLIC_WHATSAPP_AUTO=true`.
 
 ## Pendientes de VioGua
 
 - Logo definitivo (o aprobar el sistema propuesto en `/estilo/`) y moodboard de ejemplo en alta resolución.
-- WhatsApp, email y ciudad del estudio; quién está detrás de VioGua (para «Sobre VioGua»).
-- Días, horarios, duración, margen y aviso mínimo de las reuniones.
+- Ciudad del estudio; quién está detrás de VioGua (para «Sobre VioGua»).
+- Confirmar duración (60 min), aviso mínimo (24 h) y feriados de las reuniones; los horarios ya están definidos.
 - Validar el texto de confirmación, las preguntas frecuentes, los servicios y la política de privacidad.
 - Dominio. Perfil de Google Business (como negocio de área de servicio).
 - Aviso: la videollamada pasa de Zoom a Google Meet.

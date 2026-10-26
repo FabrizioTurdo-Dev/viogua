@@ -71,7 +71,8 @@ export interface DatosTurno {
   hora: string;
   ambientes: string[];
   meetUrl?: string | null;
-  testUrl: string;
+  /** Link para hacer el test; null si ya lo hizo (no se ofrece). */
+  testUrl: string | null;
 }
 
 /** Texto de confirmación (WhatsApp, voseo). Lo valida VioGua. */
@@ -89,10 +90,45 @@ export function mensajeConfirmacion(t: DatosTurno): string {
     '',
     `Vamos a conversar sobre: ${lista(t.ambientes)}.`,
     '',
-    `Si querés, antes de la reunión hacé el test de estilo y te regalamos tu moodboard: ${t.testUrl}`,
-    '',
+    ...(t.testUrl ? [`Si querés, antes de la reunión hacé el test de estilo y te regalamos tu moodboard: ${t.testUrl}`, ''] : []),
     '¿Necesitás cambiar el horario? Respondé este mensaje y lo reprogramamos.',
     '¡Te esperamos!',
+  ].join('\n');
+}
+
+export interface Pedido extends Pick<DatosTurno, 'nombre' | 'fecha' | 'hora' | 'ambientes'> {
+  email: string;
+  /** Total del diseño ya escrito: «$400.000». */
+  total: string;
+  promo: boolean;
+  /** Con backend: link a la ficha del pedido (datos, fotos y test) en /estudio/. */
+  ficha?: string | null;
+}
+
+/** Pedido de turno que la persona le manda al estudio por WhatsApp (sin Google Calendar). */
+export function mensajePedido(p: Pedido): string {
+  return [
+    `¡Hola, VioGua! Soy ${p.nombre.trim()} y quiero agendar una reunión por Google Meet.`,
+    '',
+    `• Día: ${fechaLarga(p.fecha)}`,
+    `• Hora: ${p.hora} hs (hora de Argentina)`,
+    `• Ambientes: ${lista(p.ambientes)}${p.promo ? ' (promo 4 + 1)' : ''}`,
+    `• Total del diseño: ${p.total}`,
+    `• Email para la invitación: ${p.email.trim()}`,
+    ...(p.ficha ? [`• Ficha del pedido: ${p.ficha}`] : []),
+    '',
+    '¿Me confirman el turno?',
+  ].join('\n');
+}
+
+/** Aviso del estudio cuando no puede hacer la reunión (desde el panel /estudio/). */
+export function mensajeCancelacion(t: Pick<DatosTurno, 'nombre' | 'fecha' | 'hora'> & { agendarUrl: string }): string {
+  return [
+    `¡Hola, ${t.nombre.trim()}! Te escribimos de VioGua.`,
+    '',
+    `No vamos a poder hacer la reunión del ${fechaLarga(t.fecha)} a las ${t.hora} hs. Te pedimos disculpas.`,
+    '',
+    `¿Elegimos otro día? Respondé este mensaje o pedí un turno nuevo en ${t.agendarUrl}`,
   ].join('\n');
 }
 
